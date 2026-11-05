@@ -10,7 +10,6 @@ html,body{height:100%}
 body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;font-size:13px;color:#1F2937;
   display:flex;flex-direction:column;overflow:hidden;background:#F4F7FB}
 button{font-family:inherit;cursor:pointer}
-/* 顶栏 */
 .nav{height:48px;background:#1E3A6F;color:#fff;display:flex;align-items:center;padding:0 16px;flex:0 0 48px;z-index:5}
 .nav .lg{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.5px}
 .nav .lg i{width:24px;height:24px;border-radius:5px;background:#fff;color:#1E3A6F;font-style:normal;
@@ -23,9 +22,7 @@ button{font-family:inherit;cursor:pointer}
 .nav .usr i{width:26px;height:26px;border-radius:50%;background:#2F6BFF;color:#fff;font-style:normal;
   font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .nav .win{display:flex;gap:12px;font-size:14px;opacity:.85;margin-left:16px}
-/* 主体 */
 .body{flex:1;min-height:0;display:flex}
-/* 左菜单 */
 .side{width:196px;flex:0 0 196px;background:#1B2C4F;color:#fff;overflow-y:auto;padding:10px 0 16px}
 .mi{display:flex;align-items:center;gap:9px;height:38px;padding:0 14px;font-size:13px;color:rgba(255,255,255,.8);
   cursor:pointer;position:relative;user-select:none;white-space:nowrap}
@@ -42,7 +39,6 @@ button{font-family:inherit;cursor:pointer}
 .sub .mi.on:before{left:0;width:3px;background:#4C8DFF}
 .sub.hide{display:none}
 .side .tip{padding:14px;font-size:11.5px;color:rgba(255,255,255,.35);line-height:1.7}
-/* 内容 */
 .main{flex:1;min-width:0;display:flex;flex-direction:column;background:#F4F7FB}
 .phead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:13px 16px 11px}
 .phead h1{font-size:17px;font-weight:700;color:#173D43;letter-spacing:.3px}
@@ -51,9 +47,6 @@ button{font-family:inherit;cursor:pointer}
 .frameWrap{flex:1;min-height:0;margin:0 12px 12px;background:#fff;border:1px solid #E3E9F2;border-radius:6px;
   overflow:hidden;display:flex}
 iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
-.ph{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9AA4B2;gap:8px}
-.ph b{font-size:32px;opacity:.22;font-weight:400}
-.ph span{font-size:13px}
 </style>
 </head>
 <body>
@@ -73,6 +66,8 @@ iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
     <div class="sub" id="subOps">
       <div class="mi on" data-v="task">
         <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg>任务管理</div>
+      <div class="mi" data-v="batch">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2"/></svg>补发记录</div>
       <div class="mi" data-v="monitor">
         <svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 4-6 5 5"/><path d="M3 21h18"/></svg>数据监控</div>
     </div>
@@ -84,10 +79,7 @@ iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
       <h1>V2.49.0</h1>
       <div class="crumb" id="crumb">运维管理 / <b>任务管理</b></div>
     </div>
-    <div class="frameWrap">
-      <iframe id="frame" title="原型页面"></iframe>
-      <div class="ph" id="ph" style="display:none"><b>▤</b><span>该模块暂未纳入本版本</span></div>
-    </div>
+    <div class="frameWrap"><iframe id="frame" title="原型页面"></iframe></div>
   </div>
 </div>
 
@@ -328,11 +320,6 @@ td.nw{white-space:nowrap}
 .ctw .empty2{padding:40px 0;text-align:center;color:#909399;font-size:12.5px}
 .cpager{display:flex;align-items:center;gap:10px;padding:9px 18px;flex:0 0 auto}
 .cinfo{font-size:12.5px;color:#606266}
-.cinfo b{color:#303133}
-.cst{margin-left:12px;padding-left:11px;border-left:1px solid #EBEEF5}
-.cst.ok{color:#52C41A}
-.cst.wait{color:#8C8C8C}
-.cst.bad{color:#FF4D4F}
 .cpages{display:flex;gap:6px;margin-left:auto}
 .cpages button{min-width:26px;height:26px;border:1px solid #DCDFE6;background:#fff;border-radius:4px;
   color:#606266;font-size:12.5px;cursor:pointer}
@@ -468,9 +455,6 @@ td.nw{white-space:nowrap}
       <div class="cf"><label>患者号</label><input id="cfPat" placeholder="请输入"></div>
       <div class="cf"><label>检查号</label><input id="cfStudy" placeholder="请输入"></div>
       <div class="cf"><label>UID</label><input id="cfUid" placeholder="请输入"></div>
-      <div class="cf"><label>发起状态</label>
-        <select id="cfStatus"><option value="">请选择</option><option>未发起</option><option>已发起</option><option>发起失败</option></select>
-      </div>
       <div class="cf w2"><label>检查时间</label>
         <div class="rng"><input type="datetime-local" step="1" id="cfFrom"><span>→</span>
           <input type="datetime-local" step="1" id="cfTo"></div>
@@ -490,7 +474,7 @@ td.nw{white-space:nowrap}
         <thead><tr>
           <th class="cc"><input type="checkbox" id="ckPage"></th>
           <th>机构名称</th><th>设备</th><th>姓名</th><th>患者号</th><th>检查号</th>
-          <th>检查时间</th><th>上传时间</th><th>UID</th><th>发起状态</th><th>操作</th>
+          <th>检查时间</th><th>上传时间</th><th>UID</th><th>操作</th>
         </tr></thead>
         <tbody id="cloudTb"></tbody>
       </table>
@@ -506,7 +490,6 @@ td.nw{white-space:nowrap}
     <div class="cdf">
       <span class="csel" id="cloudSel">已选 0 条</span>
       <span class="cerr" id="cloudErr"></span>
-      <button class="cbtn" id="btnCloudSend" disabled>发起所选</button>
       <button class="cbtn" data-cx>关闭</button>
       <button class="cbtn pri" id="btnCloudOk">确认</button>
     </div>
@@ -841,15 +824,13 @@ var CROWS = (function(){
       pat: '00005' + (22391 + i * 3),
       study: 'DX01' + (34594 + i),
       time: fstamp(t), utime: fstamp(u),
-      uid: '1.2.840.40823.1.1.1.' + (100000 + i * 7) + '.' + (i % 13),
-      st: (i % 13 === 0) ? '发起失败' : (i % 3 === 0 ? '未发起' : '已发起'),
-      stime: (i % 3 === 0) ? '' : fstamp(new Date(t.getTime() + 7200000))
+      uid: '1.2.840.40823.1.1.1.' + (100000 + i * 7) + '.' + (i % 13)
     });
   }
   return out;
 })();
 
-var CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'', status:'',
+var CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
            from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
 
 function clFiltered(){
@@ -862,7 +843,6 @@ function clFiltered(){
     if (CL.to   && r.time > CL.to)   return false;
     if (CL.ufrom && r.utime < CL.ufrom) return false;
     if (CL.uto   && r.utime > CL.uto)   return false;
-    if (CL.status && r.st !== CL.status) return false;
     return true;
   });
 }
@@ -894,14 +874,10 @@ function clRender(){
 
   var tb = document.getElementById('cloudTb');
   if (!pageRows.length){
-    tb.innerHTML = '<tr><td colspan="11"><div class="empty2">没有符合条件的数据</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="10"><div class="empty2">没有符合条件的数据</div></td></tr>';
   } else {
     tb.innerHTML = pageRows.map(function (r){
       var on = !!CL.sel[r.id];
-      var sc = r.st === '已发起' ? '#52C41A' : (r.st === '发起失败' ? '#FF4D4F' : '#8C8C8C');
-      var acts = '<a class="lnk2" data-clv="' + r.id + '">阅片</a>'
-               + '<a class="lnk2" data-cld="' + r.id + '">详情</a>'
-               + (r.st === '已发起' ? '' : '<a class="lnk2" data-csend="' + r.id + '">发起</a>');
       return '<tr><td class="cc"><input type="checkbox" data-crow="' + r.id + '"' + (on ? ' checked' : '') + '></td>'
         + '<td class="el" title="' + esc(r.org) + '">' + esc(r.org) + '</td>'
         + '<td>' + esc(r.dev) + '</td>'
@@ -909,28 +885,12 @@ function clRender(){
         + '<td>' + esc(r.pat) + '</td><td>' + esc(r.study) + '</td>'
         + '<td>' + esc(r.time) + '</td><td>' + esc(r.utime) + '</td>'
         + '<td class="el" title="' + esc(r.uid) + '">' + esc(r.uid) + '</td>'
-        + '<td title="' + (r.stime ? '发起时间：' + esc(r.stime) : '尚未发起') + '">'
-        +   '<span class="dot"><i style="background:' + sc + '"></i>' + esc(r.st) + '</span></td>'
-        + '<td>' + acts + '</td></tr>';
+        + '<td><a class="lnk2" data-clv="' + r.id + '">阅片</a><a class="lnk2" data-cld="' + r.id + '">详情</a></td></tr>';
     }).join('');
   }
   var selN = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; }).length;
   document.getElementById('cloudSel').textContent = '已选 ' + selN + ' 条';
-  var nSent = rows.filter(function (r){ return r.st === '已发起'; }).length;
-  var nWait = rows.filter(function (r){ return r.st === '未发起'; }).length;
-  var nBad  = rows.filter(function (r){ return r.st === '发起失败'; }).length;
-  document.getElementById('cInfo').innerHTML = '共 <b>' + rows.length + '</b> 条'
-    + '<span class="cst ok">已发起 ' + nSent + '</span>'
-    + '<span class="cst wait">未发起 ' + nWait + '</span>'
-    + (nBad ? '<span class="cst bad">发起失败 ' + nBad + '</span>' : '');
-  var sendable = Object.keys(CL.sel).filter(function (k){
-    if (!CL.sel[k]) return false;
-    var r = CROWS.filter(function (x){ return x.id === k; })[0];
-    return r && r.st !== '已发起';
-  }).length;
-  var bs = document.getElementById('btnCloudSend');
-  bs.disabled = sendable === 0;
-  bs.textContent = sendable ? ('发起所选(' + sendable + ')') : '发起所选';
+  document.getElementById('cInfo').textContent = '共 ' + rows.length + ' 条';
 
   var p = '<button data-cp="' + (CL.page - 1) + '"' + (CL.page <= 1 ? ' disabled' : '') + '>‹</button>';
   var nums = [];
@@ -949,19 +909,10 @@ function clRender(){
   ck.indeterminate = pageRows.some(function (r){ return CL.sel[r.id]; }) && !ck.checked;
 }
 
-function sendRows(ids){
-  var n = 0, ts = fstamp(new Date());
-  ids.forEach(function (id){
-    var r = CROWS.filter(function (x){ return x.id === id; })[0];
-    if (!r || r.st === '已发起') return;
-    r.st = '已发起'; r.stime = ts; n++;
-  });
-  return n;
-}
 function openCloud(){
-  CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'', status:'',
+  CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
          from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
-  ['cfDev','cfName','cfPat','cfStudy','cfUid','cfStatus','cfFrom','cfTo','cuFrom','cuTo','msQ'].forEach(function (id){
+  ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo','msQ'].forEach(function (id){
     document.getElementById(id).value = '';
   });
   document.getElementById('cSize').value = '10';
@@ -975,12 +926,29 @@ function closeCloud(){
   document.getElementById('msPanel').classList.add('hidden');
 }
 function cloudConfirm(){
-  var n = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; }).length;
+  var ids = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; });
   var err = document.getElementById('cloudErr');
-  if (!n){ err.textContent = '请先勾选需要导入的数据'; return; }
+  if (!ids.length){ err.textContent = '请先勾选需要导入的数据'; return; }
   err.textContent = '';
+  var rows = ids.map(function (id){ return CROWS.filter(function (x){ return x.id === id; })[0]; });
+  var orgs = [];
+  rows.forEach(function (r){ if (orgs.indexOf(r.org) < 0) orgs.push(r.org); });
   closeCloud();
-  toast('云导入已提交：共 ' + n + ' 条数据（示意）');
+  /* 生成补发批次，交给外层「补发记录」展示 */
+  try {
+    if (window.parent && typeof window.parent.addBatch === 'function'){
+      var bid = window.parent.addBatch({
+        org: orgs.length === 1 ? orgs[0] : orgs[0] + ' 等 ' + orgs.length + ' 家',
+        dev: rows[0].dev,
+        rows: rows.map(function (r){
+          return { pat: r.pat, study: r.study, uid: r.uid, time: r.time };
+        })
+      });
+      toast('云导入已提交：共 ' + rows.length + ' 条，批次号 ' + bid);
+      return;
+    }
+  } catch (e) {}
+  toast('云导入已提交：共 ' + rows.length + ' 条数据（示意）');
 }
 
 /* ---------- 绑定 ---------- */
@@ -1140,7 +1108,6 @@ function cloudConfirm(){
   };
   document.getElementById('cfQuery').onclick = function (){
     CL.dev = document.getElementById('cfDev').value;
-    CL.status = document.getElementById('cfStatus').value;
     CL.name = document.getElementById('cfName').value.trim();
     CL.pat = document.getElementById('cfPat').value.trim();
     CL.study = document.getElementById('cfStudy').value.trim();
@@ -1152,10 +1119,10 @@ function cloudConfirm(){
     CL.page = 1; CL.sel = {}; clRender();
   };
   document.getElementById('cfReset').onclick = function (){
-    ['cfDev','cfName','cfPat','cfStudy','cfUid','cfStatus','cfFrom','cfTo','cuFrom','cuTo'].forEach(function (id){
+    ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo'].forEach(function (id){
       document.getElementById(id).value = '';
     });
-    CL.dev = CL.name = CL.pat = CL.study = CL.uid = ''; CL.status = '';
+    CL.dev = CL.name = CL.pat = CL.study = CL.uid = '';
     CL.from = CL.to = CL.ufrom = CL.uto = '';
     CL.page = 1; CL.sel = {}; CL.q = '';
     document.getElementById('msQ').value = '';
@@ -1165,25 +1132,11 @@ function cloudConfirm(){
     var t = e.target;
     var ck = t.getAttribute && t.getAttribute('data-crow');
     if (ck){ CL.sel[ck] = t.checked; clRender(); return; }
-    var sd = t.getAttribute && t.getAttribute('data-csend');
-    if (sd){
-      var n = sendRows([sd]);
-      clRender();
-      toast('已发起 ' + n + ' 条数据（示意）');
-      return;
-    }
     var v = t.getAttribute && (t.getAttribute('data-clv') || t.getAttribute('data-cld'));
     if (v){
       var r = CROWS.filter(function (x){ return x.id === v; })[0];
       toast((t.getAttribute('data-clv') ? '打开阅片：' : '查看详情：') + r.study + '（示意）');
     }
-  };
-  document.getElementById('btnCloudSend').onclick = function (){
-    var ids = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; });
-    var n = sendRows(ids);
-    CL.sel = {};
-    clRender();
-    toast(n ? ('已发起 ' + n + ' 条数据（示意）') : '所选数据均已发起');
   };
   document.getElementById('ckPage').onclick = function (){
     var rows = clFiltered().slice((CL.page - 1) * CL.size, CL.page * CL.size);
@@ -2126,23 +2079,545 @@ renderAll();
 </body>
 </html>
 </template>
+<template id="tplBatch"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>补发记录 · MIIA-AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;background:#F0F2F5;color:#333;
+  font-size:13px;display:flex;flex-direction:column;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+.wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px 14px}
+.hd{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex:0 0 auto}
+.hd h1{font-size:16px;font-weight:600;color:#303133}
+.hd .sp{flex:1}
+.btn{height:30px;padding:0 13px;border:1px solid #D9D9D9;background:#fff;border-radius:4px;color:#595959;font-size:12.5px}
+.btn:hover{border-color:#1890FF;color:#1890FF}
+.btn.pri{background:#1890FF;border-color:#1890FF;color:#fff}
+.btn.pri:hover{background:#40A9FF;color:#fff}
+.btn[disabled]{background:#F5F5F5;color:#BFBFBF;border-color:#D9D9D9;cursor:not-allowed}
+.fbar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;background:#fff;border-radius:4px;padding:10px 12px;
+  margin-bottom:10px;flex:0 0 auto;border:1px solid #F0F0F0}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi label{font-size:12px;color:#8C8C8C}
+.fi input,.fi select{height:30px;border:1px solid #D9D9D9;border-radius:4px;padding:0 8px;font-size:12.5px;
+  color:#333;background:#fff;outline:none;font-family:inherit}
+.fi input{width:150px}
+.fi input:focus,.fi select:focus{border-color:#1890FF}
+.fbar .sp{flex:1}
+.card{background:#fff;border-radius:4px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid #F0F0F0}
+.tw{flex:1;min-height:0;overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+thead th{position:sticky;top:0;z-index:2;background:#F5F7FA;color:#333;font-weight:600;text-align:left;
+  padding:9px 10px;border-bottom:1px solid #EBEEF5;white-space:nowrap}
+tbody td{padding:9px 10px;border-bottom:1px solid #F0F0F0;color:#333;vertical-align:middle;white-space:nowrap}
+tbody tr:hover td{background:#F5F9FF}
+td.cc,th.cc{width:44px;text-align:center}
+.dot{display:inline-flex;align-items:center;gap:6px}
+.dot i{width:6px;height:6px;border-radius:50%;flex:0 0 6px}
+.lnk{color:#1890FF;cursor:pointer;font-size:12.5px}
+.lnk:hover{text-decoration:underline}
+.lnk+.lnk{margin-left:11px}
+.num{font-variant-numeric:tabular-nums}
+.ok{color:#52C41A}.wait{color:#8C8C8C}.bad{color:#FF4D4F}
+.pg{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 12px;border-top:1px solid #F0F0F0;
+  color:#8C8C8C;font-size:12.5px}
+.pg .sp{flex:1}
+.pg .p{min-width:28px;height:28px;border:1px solid #D9D9D9;background:#fff;border-radius:4px;color:#595959;font-size:12.5px}
+.pg .p.on{background:#1890FF;border-color:#1890FF;color:#fff}
+.pg .p[disabled]{color:#D9D9D9;cursor:not-allowed}
+.pg .gap{color:#BFBFBF}
+.empty{padding:50px 0;text-align:center;color:#BFBFBF}
+/* 明细弹窗 */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50}
+.mask.hidden{display:none}
+.dlg{background:#fff;border-radius:6px;width:min(1280px,94vw);height:84vh;display:flex;flex-direction:column;
+  box-shadow:0 16px 44px rgba(0,0,0,.22);overflow:hidden}
+.dh{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid #F0F0F0;flex:0 0 auto}
+.dh h3{font-size:15px;font-weight:600;color:#303133}
+.dh .bid{font-size:12.5px;color:#8C8C8C}
+.dh .sp{flex:1}
+.dh .x{width:24px;height:24px;line-height:22px;text-align:center;border-radius:4px;color:#BFBFBF;cursor:pointer;font-size:16px}
+.dh .x:hover{background:#F5F5F5;color:#595959}
+.dsum{display:flex;align-items:center;gap:16px;padding:10px 16px;background:#FAFAFA;border-bottom:1px solid #F0F0F0;
+  font-size:12.5px;color:#595959;flex:0 0 auto}
+.dsum b{color:#303133;font-weight:600}
+.dbar{display:flex;align-items:center;gap:9px;padding:10px 16px;border-bottom:1px solid #F0F0F0;flex:0 0 auto;flex-wrap:wrap}
+.dbar select,.dbar input{height:28px;border:1px solid #D9D9D9;border-radius:4px;padding:0 8px;font-size:12.5px;
+  color:#333;outline:none;font-family:inherit}
+.dbar input{width:140px}
+.dbar .sp{flex:1}
+.dtable{flex:1;min-height:0;display:flex;padding:0 16px}
+.dtw{flex:1;min-height:0;overflow:auto;border:1px solid #EBEEF5;border-radius:4px}
+.dpager{display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:12.5px;color:#8C8C8C;flex:0 0 auto}
+.dpager .sp{flex:1}
+.df{display:flex;justify-content:flex-end;gap:8px;padding:11px 16px;border-top:1px solid #F0F0F0;flex:0 0 auto}
+.toast{position:fixed;left:50%;top:64px;transform:translateX(-50%) translateY(-8px);background:#333;color:#fff;
+  padding:9px 16px;border-radius:4px;font-size:12.5px;opacity:0;pointer-events:none;transition:.22s;z-index:90}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <h1>补发记录</h1>
+    <div class="sp"></div>
+    <button class="btn" id="btnRefresh">刷新</button>
+    <button class="btn" id="btnResetAll">重置</button>
+  </div>
+
+  <div class="fbar">
+    <div class="fi"><label>批次号</label><input id="fBid" placeholder="请输入"></div>
+    <div class="fi"><label>机构</label><select id="fOrg"><option value="">全部机构</option></select></div>
+    <div class="fi"><label>批次状态</label>
+      <select id="fState"><option value="">请选择</option><option>待发起</option><option>进行中</option><option>已完成</option></select>
+    </div>
+    <div class="fi"><label>发起状态</label>
+      <select id="fRowState"><option value="">请选择</option><option>未发起</option><option>已发起</option><option>发起失败</option></select>
+    </div>
+    <div class="fi"><label>补发时间</label><input type="datetime-local" step="1" id="fFrom"></div>
+    <div class="fi"><label>&nbsp;</label><input type="datetime-local" step="1" id="fTo"></div>
+    <div class="sp"></div>
+    <button class="btn" id="btnReset">重置</button>
+    <button class="btn pri" id="btnQuery">查询</button>
+  </div>
+
+  <div class="card">
+    <div class="tw">
+      <table id="tbl">
+        <thead><tr>
+          <th>批次号</th><th>补发时间</th><th>机构</th><th>设备</th><th>操作人</th>
+          <th class="num">补发条数</th><th class="num">已发起</th><th class="num">未发起</th><th class="num">发起失败</th>
+          <th>批次状态</th><th>操作</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <div class="pg" id="pg"></div>
+  </div>
+</div>
+
+<div class="mask hidden" id="mkDetail">
+  <div class="dlg">
+    <div class="dh"><h3>补发明细</h3><span class="bid" id="dBid"></span><div class="sp"></div><div class="x" data-dx>×</div></div>
+    <div class="dsum" id="dSum"></div>
+    <div class="dbar">
+      <select id="dState"><option value="">全部发起状态</option><option>未发起</option><option>已发起</option><option>发起失败</option></select>
+      <input id="dStudy" placeholder="检查号">
+      <input id="dPat" placeholder="患者号">
+      <button class="btn" id="dQuery">查询</button>
+      <button class="btn" id="dReset">重置</button>
+      <div class="sp"></div>
+      <button class="btn pri" id="dSend" disabled>发起所选</button>
+    </div>
+    <div class="dtable"><div class="dtw">
+      <table id="dtbl">
+        <thead><tr>
+          <th class="cc"><input type="checkbox" id="dCkAll"></th>
+          <th>患者号</th><th>检查号</th><th>UID</th><th>检查时间</th><th>发起状态</th><th>发起时间</th><th>操作</th>
+        </tr></thead>
+        <tbody id="dtb"></tbody>
+      </table>
+    </div></div>
+    <div class="dpager" id="dPg"></div>
+    <div class="df"><button class="btn" data-dx>关闭</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ---------- 基础 ---------- */
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function fstamp(d){
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' '
+       + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function uniq(a){ var r = []; a.forEach(function(x){ if (r.indexOf(x) < 0) r.push(x); }); return r; }
+function toast(m){
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
+}
+
+var ORGS = ['四川大学华西医院','贵溪市中医院','南昌市第一医院','金华广福医院','遂川第一人民医院'];
+var DEVS = ['CT','MR','DR'];
+var PATS = ['PAT20260012','PAT20260045','PAT20260078','PAT20260103','PAT20260137','PAT20260166'];
+
+/* ---------- 批次数据 ---------- */
+function mkRows(n, seed, sentN){
+  var out = [], base = new Date(2026, 10, 5, 14, 20, 33);
+  for (var i = 0; i < n; i++){
+    var t = new Date(base.getTime() - i * 61000);
+    var sent = i < sentN;
+    var bad = !sent && (i % 23 === 7);
+    out.push({
+      id: 'R' + seed + '_' + i,
+      pat: PATS[i % PATS.length],
+      study: 'CN2026' + (734900 - seed * 7 - i),
+      uid: '1.2.840.40823.1.1.1.' + (100000 + seed * 31 + i * 3),
+      time: fstamp(t),
+      st: sent ? '已发起' : (bad ? '发起失败' : '未发起'),
+      stime: sent ? fstamp(new Date(t.getTime() + 45000)) : ''
+    });
+  }
+  return out;
+}
+
+function syncPB(){ try { if (window.parent) window.parent.PB_STATE = PB; } catch (e) {} }
+
+var PB = (function(){
+  try {
+    var st = window.parent && window.parent.PB_STATE;
+    if (st && st.batches && st.batches.length) return st;
+  } catch (e) {}
+  return {
+  seq: 0,
+  batches: [
+    { id: 'BF20261105001', time: '2026-11-05 14:20:33', org: '四川大学华西医院', dev: 'CT', op: '钱多多',
+      rows: mkRows(200, 1, 150) },
+    { id: 'BF20261105002', time: '2026-11-05 11:08:12', org: '贵溪市中医院', dev: 'MR', op: '钱多多',
+      rows: mkRows(50, 2, 50) },
+    { id: 'BF20261104003', time: '2026-11-04 17:42:05', org: '南昌市第一医院', dev: 'CT', op: '李敏',
+      rows: mkRows(120, 3, 0) },
+    { id: 'BF20261104004', time: '2026-11-04 09:15:47', org: '金华广福医院', dev: 'DR', op: '李敏',
+      rows: mkRows(80, 4, 80) },
+    { id: 'BF20261103005', time: '2026-11-03 15:31:26', org: '遂川第一人民医院', dev: 'CT', op: '钱多多',
+      rows: mkRows(300, 5, 90) }
+  ]
+  };
+})();
+
+function bStat(b){
+  var sent = b.rows.filter(function (r){ return r.st === '已发起'; }).length;
+  var bad = b.rows.filter(function (r){ return r.st === '发起失败'; }).length;
+  var wait = b.rows.filter(function (r){ return r.st === '未发起'; }).length;
+  var state = sent === b.rows.length ? '已完成' : (sent === 0 ? '待发起' : '进行中');
+  return { total: b.rows.length, sent: sent, wait: wait, bad: bad, state: state };
+}
+function stateDot(st){
+  var c = st === '已完成' ? '#52C41A' : (st === '进行中' ? '#1890FF' : '#8C8C8C');
+  return '<span class="dot"><i style="background:' + c + '"></i>' + st + '</span>';
+}
+function rowDot(st){
+  var c = st === '已发起' ? '#52C41A' : (st === '发起失败' ? '#FF4D4F' : '#8C8C8C');
+  return '<span class="dot"><i style="background:' + c + '"></i>' + st + '</span>';
+}
+
+/* ---------- 批次列表 ---------- */
+var S = { bid:'', org:'', state:'', rstate:'', from:'', to:'', page:1, size:10 };
+var D = { bid:'', state:'', study:'', pat:'', page:1, size:10, sel:{} };
+
+function batchList(){
+  return PB.batches.filter(function (b){
+    var st = bStat(b);
+    if (S.bid && b.id.indexOf(S.bid.toUpperCase()) < 0) return false;
+    if (S.org && b.org !== S.org) return false;
+    if (S.state && st.state !== S.state) return false;
+    if (S.rstate){
+      var has = b.rows.some(function (r){ return r.st === S.rstate; });
+      if (!has) return false;
+    }
+    if (S.from && b.time < S.from) return false;
+    if (S.to   && b.time > S.to)   return false;
+    return true;
+  });
+}
+
+function renderBatch(){
+  var list = batchList();
+  var maxP = Math.max(1, Math.ceil(list.length / S.size));
+  if (S.page > maxP) S.page = maxP;
+  var show = list.slice((S.page - 1) * S.size, S.page * S.size);
+  var tb = document.getElementById('tb');
+
+  if (!show.length){
+    tb.innerHTML = '<tr><td colspan="11"><div class="empty">没有符合条件的补发批次</div></td></tr>';
+  } else {
+    tb.innerHTML = show.map(function (b){
+      var st = bStat(b);
+      return '<tr>'
+        + '<td>' + esc(b.id) + '</td>'
+        + '<td>' + esc(b.time) + '</td>'
+        + '<td>' + esc(b.org) + '</td>'
+        + '<td>' + esc(b.dev) + '</td>'
+        + '<td>' + esc(b.op) + '</td>'
+        + '<td class="num">' + st.total + '</td>'
+        + '<td class="num ok">' + st.sent + '</td>'
+        + '<td class="num wait">' + st.wait + '</td>'
+        + '<td class="num ' + (st.bad ? 'bad' : '') + '">' + st.bad + '</td>'
+        + '<td>' + stateDot(st.state) + '</td>'
+        + '<td><a class="lnk" data-detail="' + esc(b.id) + '">查看明细</a></td></tr>';
+    }).join('');
+  }
+
+  var p = '<button class="p" data-p="' + (S.page - 1) + '"' + (S.page <= 1 ? ' disabled' : '') + '>‹</button>';
+  var nums = [];
+  for (var n = 1; n <= maxP; n++) if (n <= 3 || n === maxP || Math.abs(n - S.page) <= 1) nums.push(n);
+  var last = 0;
+  nums.forEach(function (n){
+    if (last && n - last > 1) p += '<span class="gap">…</span>';
+    p += '<button class="p' + (n === S.page ? ' on' : '') + '" data-p="' + n + '">' + n + '</button>';
+    last = n;
+  });
+  p += '<button class="p" data-p="' + (S.page + 1) + '"' + (S.page >= maxP ? ' disabled' : '') + '>›</button>';
+  document.getElementById('pg').innerHTML = '<span>共 <b>' + list.length + '</b> 个批次</span><span class="sp"></span>' + p;
+  syncPB();
+}
+
+/* ---------- 明细 ---------- */
+function curBatch(){ return PB.batches.filter(function (b){ return b.id === D.bid; })[0]; }
+
+function detailRows(){
+  var b = curBatch();
+  if (!b) return [];
+  return b.rows.filter(function (r){
+    if (D.state && r.st !== D.state) return false;
+    if (D.study && r.study.toUpperCase().indexOf(D.study.toUpperCase()) < 0) return false;
+    if (D.pat && r.pat.toUpperCase().indexOf(D.pat.toUpperCase()) < 0) return false;
+    return true;
+  });
+}
+
+function renderDetail(){
+  var b = curBatch();
+  if (!b){ closeDetail(); return; }
+  var st = bStat(b);
+  document.getElementById('dBid').textContent = b.id + ' · ' + b.org + ' · ' + b.time;
+  document.getElementById('dSum').innerHTML =
+      '共 <b>' + st.total + '</b> 条'
+    + '<span class="ok">已发起 <b>' + st.sent + '</b></span>'
+    + '<span class="wait">未发起 <b>' + st.wait + '</b></span>'
+    + '<span class="' + (st.bad ? 'bad' : '') + '">发起失败 <b>' + st.bad + '</b></span>'
+    + '<span style="margin-left:auto">' + stateDot(st.state) + '</span>';
+
+  var rows = detailRows();
+  var maxP = Math.max(1, Math.ceil(rows.length / D.size));
+  if (D.page > maxP) D.page = maxP;
+  var show = rows.slice((D.page - 1) * D.size, D.page * D.size);
+  var tb = document.getElementById('dtb');
+
+  if (!show.length){
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty">没有符合条件的数据</div></td></tr>';
+  } else {
+    tb.innerHTML = show.map(function (r){
+      var on = !!D.sel[r.id];
+      var acts = (r.st === '已发起') ? '<a class="lnk" data-view="' + r.id + '">查看</a>'
+                : '<a class="lnk" data-send="' + r.id + '">' + (r.st === '发起失败' ? '重试' : '发起') + '</a>';
+      return '<tr><td class="cc"><input type="checkbox" data-ck="' + r.id + '"' + (on ? ' checked' : '') + '></td>'
+        + '<td>' + esc(r.pat) + '</td><td>' + esc(r.study) + '</td>'
+        + '<td>' + esc(r.uid) + '</td><td>' + esc(r.time) + '</td>'
+        + '<td>' + rowDot(r.st) + '</td><td>' + (r.stime || '—') + '</td>'
+        + '<td>' + acts + '</td></tr>';
+    }).join('');
+  }
+
+  var selN = Object.keys(D.sel).filter(function (k){
+    if (!D.sel[k]) return false;
+    var r = b.rows.filter(function (x){ return x.id === k; })[0];
+    return r && r.st !== '已发起';
+  }).length;
+  var btn = document.getElementById('dSend');
+  btn.disabled = selN === 0;
+  btn.textContent = selN ? ('发起所选(' + selN + ')') : '发起所选';
+
+  var p = '<span>共 ' + rows.length + ' 条</span><span class="sp"></span>'
+    + '<button class="p" data-p="' + (D.page - 1) + '"' + (D.page <= 1 ? ' disabled' : '') + '>‹</button>';
+  var nums = [];
+  for (var n = 1; n <= maxP; n++) if (n <= 3 || n === maxP || Math.abs(n - D.page) <= 1) nums.push(n);
+  var last = 0;
+  nums.forEach(function (n){
+    if (last && n - last > 1) p += '<span class="gap">…</span>';
+    p += '<button class="p' + (n === D.page ? ' on' : '') + '" data-p="' + n + '">' + n + '</button>';
+    last = n;
+  });
+  p += '<button class="p" data-p="' + (D.page + 1) + '"' + (D.page >= maxP ? ' disabled' : '') + '>›</button>';
+  document.getElementById('dPg').innerHTML = p;
+
+  var ck = document.getElementById('dCkAll');
+  ck.checked = show.length > 0 && show.every(function (r){ return D.sel[r.id]; });
+  ck.indeterminate = show.some(function (r){ return D.sel[r.id]; }) && !ck.checked;
+}
+
+function openDetail(id){
+  D = { bid: id, state:'', study:'', pat:'', page:1, size:10, sel:{} };
+  document.getElementById('dState').value = '';
+  document.getElementById('dStudy').value = '';
+  document.getElementById('dPat').value = '';
+  renderDetail();
+  document.getElementById('mkDetail').classList.remove('hidden');
+}
+function closeDetail(){
+  document.getElementById('mkDetail').classList.add('hidden');
+  D.bid = ''; D.sel = {};
+}
+
+function sendRows(ids){
+  var b = curBatch(), n = 0, ts = fstamp(new Date());
+  ids.forEach(function (id){
+    var r = b.rows.filter(function (x){ return x.id === id; })[0];
+    if (!r || r.st === '已发起') return;
+    r.st = '已发起'; r.stime = ts; n++;
+  });
+  return n;
+}
+
+/* ---------- 对外：接收云导入生成的新批次 ---------- */
+function addBatch(o, fid){
+  PB.seq++;
+  var d = new Date();
+  var id = fid || ('BF' + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate())
+         + pad(d.getHours()) + pad(d.getMinutes()) + pad(PB.seq));
+  var rows = (o.rows || []).map(function (r, i){
+    return { id: 'N' + PB.seq + '_' + i, pat: r.pat, study: r.study, uid: r.uid,
+             time: r.time || fstamp(d), st: '未发起', stime: '' };
+  });
+  PB.batches.unshift({
+    id: id, time: fstamp(d), org: o.org || '—', dev: o.dev || 'CT', op: '钱多多', rows: rows
+  });
+  renderBatch();
+  return id;
+}
+window.addBatch = addBatch;
+window.PB = PB;
+
+/* ---------- 绑定 ---------- */
+(function init(){
+  uniq(PB.batches.map(function (b){ return b.org; })).forEach(function (o){
+    document.getElementById('fOrg').insertAdjacentHTML('beforeend', '<option>' + esc(o) + '</option>');
+  });
+
+  document.getElementById('btnQuery').onclick = function (){
+    S.bid = document.getElementById('fBid').value.trim();
+    S.org = document.getElementById('fOrg').value;
+    S.state = document.getElementById('fState').value;
+    S.rstate = document.getElementById('fRowState').value;
+    S.from = document.getElementById('fFrom').value.replace('T', ' ');
+    S.to = document.getElementById('fTo').value.replace('T', ' ');
+    S.page = 1; renderBatch();
+  };
+  var reset = function (){
+    ['fBid','fOrg','fState','fRowState','fFrom','fTo'].forEach(function (id){
+      document.getElementById(id).value = '';
+    });
+    S.bid = S.org = S.state = S.rstate = S.from = S.to = '';
+    S.page = 1; renderBatch();
+  };
+  document.getElementById('btnReset').onclick = reset;
+  document.getElementById('btnResetAll').onclick = reset;
+  document.getElementById('btnRefresh').onclick = function (){ renderBatch(); toast('已刷新'); };
+
+  document.getElementById('tb').onclick = function (e){
+    var id = e.target.getAttribute && e.target.getAttribute('data-detail');
+    if (id) openDetail(id);
+  };
+  document.getElementById('pg').onclick = function (e){
+    var p = e.target.getAttribute && e.target.getAttribute('data-p');
+    if (p){ S.page = +p; renderBatch(); }
+  };
+
+  document.getElementById('dQuery').onclick = function (){
+    D.state = document.getElementById('dState').value;
+    D.study = document.getElementById('dStudy').value.trim();
+    D.pat = document.getElementById('dPat').value.trim();
+    D.page = 1; D.sel = {}; renderDetail();
+  };
+  document.getElementById('dReset').onclick = function (){
+    document.getElementById('dState').value = '';
+    document.getElementById('dStudy').value = '';
+    document.getElementById('dPat').value = '';
+    D.state = D.study = D.pat = ''; D.page = 1; D.sel = {}; renderDetail();
+  };
+  document.getElementById('dState').onchange = function (){
+    D.state = this.value; D.page = 1; D.sel = {}; renderDetail();
+  };
+  document.getElementById('dSend').onclick = function (){
+    var ids = Object.keys(D.sel).filter(function (k){ return D.sel[k]; });
+    var n = sendRows(ids);
+    D.sel = {};
+    renderDetail(); renderBatch();
+    toast(n ? ('已发起 ' + n + ' 条数据（示意）') : '所选数据均已发起');
+  };
+  document.getElementById('dtb').onclick = function (e){
+    var t = e.target;
+    var ck = t.getAttribute && t.getAttribute('data-ck');
+    if (ck){ D.sel[ck] = t.checked; renderDetail(); return; }
+    var sd = t.getAttribute && t.getAttribute('data-send');
+    if (sd){
+      var n = sendRows([sd]);
+      renderDetail(); renderBatch();
+      toast('已发起 ' + n + ' 条数据（示意）');
+      return;
+    }
+    var v = t.getAttribute && t.getAttribute('data-view');
+    if (v){
+      var r = curBatch().rows.filter(function (x){ return x.id === v; })[0];
+      toast('查看结果：' + r.study + '（示意）');
+    }
+  };
+  document.getElementById('dCkAll').onclick = function (){
+    var rows = detailRows().slice((D.page - 1) * D.size, D.page * D.size);
+    var on = this.checked;
+    rows.forEach(function (r){ D.sel[r.id] = on; });
+    renderDetail();
+  };
+  document.getElementById('dPg').onclick = function (e){
+    var p = e.target.getAttribute && e.target.getAttribute('data-p');
+    if (p){ D.page = +p; renderDetail(); }
+  };
+  [].forEach.call(document.querySelectorAll('[data-dx]'), function (x){ x.onclick = closeDetail; });
+  document.getElementById('mkDetail').onclick = function (e){ if (e.target === this) closeDetail(); };
+
+  renderBatch();
+})();
+</script>
+</body>
+</html>
+</template>
 
 <script>
 var CACHE = {};
 function pageHtml(key){
   if (CACHE[key]) return CACHE[key];
-  var html = document.getElementById(key === 'task' ? 'tplTask' : 'tplMonitor').innerHTML;
-  /* template 解析会丢弃 head/body 标签，覆盖样式追加到末尾 */
+  var tpl = { task:'tplTask', monitor:'tplMonitor', batch:'tplBatch' }[key];
+  var html = document.getElementById(tpl).innerHTML;
   html = html.replace(/<\/html>/i, '') + '<style>.nav{display:none!important}</style>';
   CACHE[key] = html;
   return html;
 }
+
+/* 云导入生成的新批次先排队，进入「补发记录」时注入 */
+var PENDING = [], SEQ = 0;
+function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+window.addBatch = function (o){
+  var d = new Date();
+  var id = 'BF' + d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate())
+         + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(++SEQ);
+  PENDING.push({ id: id, o: o });
+  return id;
+};
+function flushPending(win){
+  if (!win || typeof win.addBatch !== 'function') return;
+  PENDING.forEach(function (p){ win.addBatch(p.o, p.id); });
+  PENDING = [];
+}
+
 function showPage(key, name){
-  document.getElementById('ph').style.display = 'none';
   var f = document.getElementById('frame');
-  f.style.display = ''; f.srcdoc = pageHtml(key);
+  if (key === 'batch'){
+    f.onload = function (){ flushPending(f.contentWindow); };
+  } else {
+    f.onload = null;
+  }
+  f.srcdoc = pageHtml(key);
   document.getElementById('crumb').innerHTML = '运维管理 / <b>' + name + '</b>';
 }
+
 (function(){
   var side = document.getElementById('side');
   document.getElementById('miOps').onclick = function (){
@@ -2155,7 +2630,9 @@ function showPage(key, name){
       m.classList.add('on');
       document.getElementById('miOps').classList.add('open');
       document.getElementById('subOps').classList.remove('hide');
-      if (m.getAttribute('data-v') === 'task') showPage('task', '任务管理');
+      var v = m.getAttribute('data-v');
+      if (v === 'task') showPage('task', '任务管理');
+      else if (v === 'batch') showPage('batch', '补发记录');
       else showPage('monitor', '数据监控');
     };
   });
