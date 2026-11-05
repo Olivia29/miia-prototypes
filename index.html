@@ -944,7 +944,7 @@ function cloudConfirm(){
           return { pat: r.pat, study: r.study, uid: r.uid, time: r.time };
         })
       });
-      toast('云导入已提交：共 ' + rows.length + ' 条，批次号 ' + bid);
+      toast('云导入已提交：共 ' + rows.length + ' 条，可在「补发记录」查看发起进度');
       return;
     }
   } catch (e) {}
@@ -2171,7 +2171,6 @@ td.cc,th.cc{width:44px;text-align:center}
   </div>
 
   <div class="fbar">
-    <div class="fi"><label>批次号</label><input id="fBid" placeholder="请输入"></div>
     <div class="fi"><label>机构</label><select id="fOrg"><option value="">全部机构</option></select></div>
     <div class="fi"><label>批次状态</label>
       <select id="fState"><option value="">请选择</option><option>待发起</option><option>进行中</option><option>已完成</option></select>
@@ -2190,7 +2189,7 @@ td.cc,th.cc{width:44px;text-align:center}
     <div class="tw">
       <table id="tbl">
         <thead><tr>
-          <th>批次号</th><th>补发时间</th><th>机构</th><th>设备</th><th>操作人</th>
+          <th>补发时间</th><th>机构</th><th>设备</th><th>操作人</th>
           <th class="num">补发条数</th><th class="num">已发起</th><th class="num">未发起</th><th class="num">发起失败</th>
           <th>批次状态</th><th>操作</th>
         </tr></thead>
@@ -2309,13 +2308,12 @@ function rowDot(st){
 }
 
 /* ---------- 批次列表 ---------- */
-var S = { bid:'', org:'', state:'', rstate:'', from:'', to:'', page:1, size:10 };
+var S = { org:'', state:'', rstate:'', from:'', to:'', page:1, size:10 };
 var D = { bid:'', state:'', study:'', pat:'', page:1, size:10, sel:{} };
 
 function batchList(){
   return PB.batches.filter(function (b){
     var st = bStat(b);
-    if (S.bid && b.id.indexOf(S.bid.toUpperCase()) < 0) return false;
     if (S.org && b.org !== S.org) return false;
     if (S.state && st.state !== S.state) return false;
     if (S.rstate){
@@ -2336,12 +2334,11 @@ function renderBatch(){
   var tb = document.getElementById('tb');
 
   if (!show.length){
-    tb.innerHTML = '<tr><td colspan="11"><div class="empty">没有符合条件的补发批次</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="10"><div class="empty">没有符合条件的补发批次</div></td></tr>';
   } else {
     tb.innerHTML = show.map(function (b){
       var st = bStat(b);
       return '<tr>'
-        + '<td>' + esc(b.id) + '</td>'
         + '<td>' + esc(b.time) + '</td>'
         + '<td>' + esc(b.org) + '</td>'
         + '<td>' + esc(b.dev) + '</td>'
@@ -2387,7 +2384,7 @@ function renderDetail(){
   var b = curBatch();
   if (!b){ closeDetail(); return; }
   var st = bStat(b);
-  document.getElementById('dBid').textContent = b.id + ' · ' + b.org + ' · ' + b.time;
+  document.getElementById('dBid').textContent = b.org + ' · ' + b.time;
   document.getElementById('dSum').innerHTML =
       '共 <b>' + st.total + '</b> 条'
     + '<span class="ok">已发起 <b>' + st.sent + '</b></span>'
@@ -2492,7 +2489,6 @@ window.PB = PB;
   });
 
   document.getElementById('btnQuery').onclick = function (){
-    S.bid = document.getElementById('fBid').value.trim();
     S.org = document.getElementById('fOrg').value;
     S.state = document.getElementById('fState').value;
     S.rstate = document.getElementById('fRowState').value;
@@ -2501,10 +2497,10 @@ window.PB = PB;
     S.page = 1; renderBatch();
   };
   var reset = function (){
-    ['fBid','fOrg','fState','fRowState','fFrom','fTo'].forEach(function (id){
+    ['fOrg','fState','fRowState','fFrom','fTo'].forEach(function (id){
       document.getElementById(id).value = '';
     });
-    S.bid = S.org = S.state = S.rstate = S.from = S.to = '';
+    S.org = S.state = S.rstate = S.from = S.to = '';
     S.page = 1; renderBatch();
   };
   document.getElementById('btnReset').onclick = reset;
