@@ -2189,7 +2189,7 @@ td.cc,th.cc{width:44px;text-align:center}
     <div class="tw">
       <table id="tbl">
         <thead><tr>
-          <th>补发时间</th><th>机构</th><th>设备</th><th>操作人</th>
+          <th>补发时间</th><th>机构</th><th>操作人</th>
           <th class="num">补发条数</th><th class="num">已发起</th><th class="num">未发起</th><th class="num">发起失败</th>
           <th>批次状态</th><th>操作</th>
         </tr></thead>
@@ -2334,14 +2334,13 @@ function renderBatch(){
   var tb = document.getElementById('tb');
 
   if (!show.length){
-    tb.innerHTML = '<tr><td colspan="10"><div class="empty">没有符合条件的补发批次</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="9"><div class="empty">没有符合条件的补发批次</div></td></tr>';
   } else {
     tb.innerHTML = show.map(function (b){
       var st = bStat(b);
       return '<tr>'
         + '<td>' + esc(b.time) + '</td>'
         + '<td>' + esc(b.org) + '</td>'
-        + '<td>' + esc(b.dev) + '</td>'
         + '<td>' + esc(b.op) + '</td>'
         + '<td class="num">' + st.total + '</td>'
         + '<td class="num ok">' + st.sent + '</td>'
