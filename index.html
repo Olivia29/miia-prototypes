@@ -2168,7 +2168,6 @@ td.cc,th.cc{width:44px;text-align:center}
     <h1>补发记录</h1>
     <div class="sp"></div>
     <button class="btn" id="btnRefresh">刷新</button>
-    <button class="btn" id="btnResetAll">重置</button>
   </div>
 
   <div class="fbar">
@@ -2509,7 +2508,7 @@ window.PB = PB;
     S.page = 1; renderBatch();
   };
   document.getElementById('btnReset').onclick = reset;
-  document.getElementById('btnResetAll').onclick = reset;
+  if (document.getElementById('btnResetAll')) document.getElementById('btnResetAll').onclick = reset;
   document.getElementById('btnRefresh').onclick = function (){ renderBatch(); toast('已刷新'); };
 
   document.getElementById('tb').onclick = function (e){
