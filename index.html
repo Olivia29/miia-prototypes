@@ -67,7 +67,7 @@ iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
       <div class="mi on" data-v="task">
         <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg>任务管理</div>
       <div class="mi" data-v="batch">
-        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2"/></svg>补发记录</div>
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2"/></svg>数据补发</div>
       <div class="mi" data-v="monitor">
         <svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 4-6 5 5"/><path d="M3 21h18"/></svg>数据监控</div>
     </div>
@@ -263,76 +263,6 @@ td.nw{white-space:nowrap}
 .tx .alg{display:block;color:#333}
 .ta{margin-top:8px;display:flex;gap:8px}
 .ta .btn{height:26px;line-height:24px;font-size:12px;padding:0 10px}
-/* 云导入 */
-.cdlg{background:#fff;border-radius:6px;width:min(1480px,95vw);height:88vh;display:flex;flex-direction:column;
-  box-shadow:0 16px 48px rgba(0,0,0,.22);overflow:hidden}
-.cdh{display:flex;align-items:center;padding:13px 18px;border-bottom:1px solid #EBEEF5;flex:0 0 auto}
-.cdh h3{font-size:15px;font-weight:600;color:#303133}
-.cdh .x{margin-left:auto;width:24px;height:24px;line-height:22px;text-align:center;border-radius:4px;
-  color:#909399;cursor:pointer;font-size:16px}
-.cdh .x:hover{background:#F5F7FA;color:#606266}
-.cfilters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 16px;padding:14px 18px 10px;
-  border-bottom:1px solid #EBEEF5;flex:0 0 auto}
-.cf{min-width:0}
-.cf.w2{grid-column:span 2}
-.cf label{display:block;font-size:12px;color:#606266;margin-bottom:5px}
-.cf input:not([type]),.cf select,.cf .msBox{width:100%;height:30px;border:1px solid #DCDFE6;border-radius:4px;
-  padding:0 8px;font-size:12.5px;color:#303133;background:#fff;outline:none;font-family:inherit}
-.cf input:focus,.cf select:focus{border-color:#409EFF}
-.rng{display:flex;align-items:center;gap:6px}
-.rng input{flex:1;min-width:0;height:30px;border:1px solid #DCDFE6;border-radius:4px;padding:0 7px;
-  font-size:12px;color:#303133;outline:none;font-family:inherit;background:#fff}
-.rng input:focus{border-color:#409EFF}
-.rng span{color:#C0C4CC;font-size:12px}
-.cf.cbtns{display:flex;align-items:flex-end;justify-content:flex-end;gap:8px}
-.cbtn{height:30px;padding:0 14px;border:1px solid #DCDFE6;background:#fff;border-radius:4px;color:#606266;font-size:12.5px}
-.cbtn:hover{border-color:#409EFF;color:#409EFF}
-.cbtn.pri{background:#409EFF;border-color:#409EFF;color:#fff}
-.cbtn.pri:hover{background:#66B1FF;color:#fff}
-.mselect{position:relative}
-.msBox{display:flex;align-items:center;cursor:pointer;gap:6px}
-.msBox .msTxt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#303133}
-.msBox i{font-style:normal;color:#C0C4CC;font-size:11px}
-.msPanel{position:absolute;left:0;top:34px;width:100%;min-width:250px;background:#fff;border:1px solid #E4E7ED;
-  border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.12);z-index:20;padding:8px}
-.msPanel.hidden{display:none}
-.msQ{width:100%;height:28px;border:1px solid #DCDFE6;border-radius:4px;padding:0 8px;font-size:12px;
-  outline:none;font-family:inherit;margin-bottom:6px}
-.msQ:focus{border-color:#409EFF}
-.msAll{display:flex;align-items:center;gap:7px;padding:5px 4px;font-size:12.5px;color:#606266;cursor:pointer;
-  border-bottom:1px solid #F2F6FC;margin-bottom:4px}
-.msAll em{font-style:normal;color:#909399;font-size:11.5px;margin-left:auto}
-.msList{max-height:190px;overflow-y:auto}
-.msList label{display:flex;align-items:center;gap:7px;padding:5px 4px;font-size:12.5px;color:#303133;cursor:pointer}
-.msList label:hover{background:#F5F7FA}
-.msList .none{padding:12px;text-align:center;color:#909399;font-size:12px}
-.ctable{flex:1;min-height:0;display:flex;padding:0 18px}
-.ctw{flex:1;min-height:0;overflow:auto;border:1px solid #EBEEF5;border-radius:4px}
-.ctw table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
-.ctw thead th{position:sticky;top:0;z-index:2;background:#F5F7FA;color:#606266;font-weight:500;
-  text-align:left;padding:8px 10px;border-bottom:1px solid #EBEEF5;white-space:nowrap}
-.ctw tbody td{padding:8px 10px;border-bottom:1px solid #F2F6FC;color:#303133;white-space:nowrap}
-.ctw tbody tr:hover td{background:#F5F7FA}
-.ctw th.cc,.ctw td.cc{width:40px;text-align:center}
-.ctw td.el{max-width:190px;overflow:hidden;text-overflow:ellipsis}
-.ctw a.lnk2{color:#409EFF;cursor:pointer;font-size:12.5px}
-.ctw a.lnk2+a.lnk2{margin-left:10px}
-.ctw .empty2{padding:40px 0;text-align:center;color:#909399;font-size:12.5px}
-.cpager{display:flex;align-items:center;gap:10px;padding:9px 18px;flex:0 0 auto}
-.cinfo{font-size:12.5px;color:#606266}
-.cpages{display:flex;gap:6px;margin-left:auto}
-.cpages button{min-width:26px;height:26px;border:1px solid #DCDFE6;background:#fff;border-radius:4px;
-  color:#606266;font-size:12.5px;cursor:pointer}
-.cpages button.on{background:#409EFF;border-color:#409EFF;color:#fff}
-.cpages button:disabled{color:#C0C4CC;cursor:not-allowed}
-.cpages span{color:#C0C4CC;line-height:26px;font-size:12px}
-.csize{height:26px;border:1px solid #DCDFE6;border-radius:4px;font-size:12px;color:#606266;padding:0 4px}
-.cjump{font-size:12.5px;color:#606266;display:flex;align-items:center;gap:5px}
-.cjump input{width:44px;height:26px;border:1px solid #DCDFE6;border-radius:4px;text-align:center;
-  font-size:12.5px;outline:none;font-family:inherit}
-.cdf{display:flex;align-items:center;gap:10px;padding:11px 18px;border-top:1px solid #EBEEF5;flex:0 0 auto}
-.csel{font-size:12.5px;color:#606266;margin-right:auto}
-.cerr{font-size:12px;color:#F56C6C;margin-right:8px}
 </style>
 </head>
 <body>
@@ -340,7 +270,6 @@ td.nw{white-space:nowrap}
   <div class="hd">
     <h1>任务管理</h1>
     <div class="sp"></div>
-    <button class="btn" id="btnCloud">云导入</button>
     <button class="btn pri" id="btnEnd">结束任务</button>
     <div class="dd" id="ddWrap">
       <button class="btn pri" id="btnCalc">AI 计算 ▾</button>
@@ -432,70 +361,6 @@ td.nw{white-space:nowrap}
 </div>
 
 <!-- 云导入 -->
-<div class="mask hidden" id="mkCloud">
-  <div class="cdlg">
-    <div class="cdh"><h3>云导入</h3><div class="x" data-cx>×</div></div>
-
-    <div class="cfilters">
-      <div class="cf">
-        <label>机构名称</label>
-        <div class="mselect" id="mOrg">
-          <div class="msBox" id="msBox"><span class="msTxt">全部机构</span><i>▾</i></div>
-          <div class="msPanel hidden" id="msPanel">
-            <input class="msQ" id="msQ" placeholder="搜索机构名称" autocomplete="off">
-            <label class="msAll"><input type="checkbox" id="msAll"><span>全选</span><em id="msCount"></em></label>
-            <div class="msList" id="msList"></div>
-          </div>
-        </div>
-      </div>
-      <div class="cf"><label>设备</label>
-        <select id="cfDev"><option value="">请选择</option><option>CT</option><option>MR</option><option>DR</option></select>
-      </div>
-      <div class="cf"><label>姓名</label><input id="cfName" placeholder="请输入"></div>
-      <div class="cf"><label>患者号</label><input id="cfPat" placeholder="请输入"></div>
-      <div class="cf"><label>检查号</label><input id="cfStudy" placeholder="请输入"></div>
-      <div class="cf"><label>UID</label><input id="cfUid" placeholder="请输入"></div>
-      <div class="cf w2"><label>检查时间</label>
-        <div class="rng"><input type="datetime-local" step="1" id="cfFrom"><span>→</span>
-          <input type="datetime-local" step="1" id="cfTo"></div>
-      </div>
-      <div class="cf w2"><label>上传时间</label>
-        <div class="rng"><input type="datetime-local" step="1" id="cuFrom"><span>→</span>
-          <input type="datetime-local" step="1" id="cuTo"></div>
-      </div>
-      <div class="cf cbtns">
-        <button class="cbtn" id="cfReset">重置</button>
-        <button class="cbtn pri" id="cfQuery">查询</button>
-      </div>
-    </div>
-
-    <div class="ctable"><div class="ctw">
-      <table id="cloudTbl">
-        <thead><tr>
-          <th class="cc"><input type="checkbox" id="ckPage"></th>
-          <th>机构名称</th><th>设备</th><th>姓名</th><th>患者号</th><th>检查号</th>
-          <th>检查时间</th><th>上传时间</th><th>UID</th><th>操作</th>
-        </tr></thead>
-        <tbody id="cloudTb"></tbody>
-      </table>
-    </div></div>
-
-    <div class="cpager">
-      <span class="cinfo" id="cInfo">共 0 条</span>
-      <div class="cpages" id="cPages"></div>
-      <select id="cSize" class="csize"><option value="10">10条/页</option><option value="20">20条/页</option><option value="50">50条/页</option></select>
-      <span class="cjump">前往<input id="cJump">页</span>
-    </div>
-
-    <div class="cdf">
-      <span class="csel" id="cloudSel">已选 0 条</span>
-      <span class="cerr" id="cloudErr"></span>
-      <button class="cbtn" data-cx>关闭</button>
-      <button class="cbtn pri" id="btnCloudOk">确认</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 <script>
 /* ---------- 基础 ---------- */
@@ -811,146 +676,6 @@ function toast(m){
 }
 </script>
 <script>
-/* ---------- 云导入数据 ---------- */
-var CNAMES = ['ZhangYuXi','WANG HU','李红','陈刚','刘洋','赵敏','孙健','周强'];
-var CROWS = (function(){
-  var out = [], base = new Date(2026, 9, 5, 13, 35, 13);
-  for (var i = 0; i < 4096; i++){
-    var t = new Date(base.getTime() - i * 37 * 60000);
-    var u = new Date(t.getTime() + (5 + i % 9) * 3600000);
-    out.push({
-      id: 'C' + i, org: ORGS[i % ORGS.length], dev: DEVS[i % 3],
-      name: CNAMES[i % CNAMES.length] + (i % 6 === 0 ? '…' : ''),
-      pat: '00005' + (22391 + i * 3),
-      study: 'DX01' + (34594 + i),
-      time: fstamp(t), utime: fstamp(u),
-      uid: '1.2.840.40823.1.1.1.' + (100000 + i * 7) + '.' + (i % 13)
-    });
-  }
-  return out;
-})();
-
-var CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
-           from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
-
-function clFiltered(){
-  var f = function (v, s){ return !s || String(v).toUpperCase().indexOf(String(s).toUpperCase()) >= 0; };
-  return CROWS.filter(function (r){
-    if (CL.orgs.length && CL.orgs.indexOf(r.org) < 0) return false;
-    if (CL.dev && r.dev !== CL.dev) return false;
-    if (!f(r.name, CL.name) || !f(r.pat, CL.pat) || !f(r.study, CL.study) || !f(r.uid, CL.uid)) return false;
-    if (CL.from && r.time < CL.from) return false;
-    if (CL.to   && r.time > CL.to)   return false;
-    if (CL.ufrom && r.utime < CL.ufrom) return false;
-    if (CL.uto   && r.utime > CL.uto)   return false;
-    return true;
-  });
-}
-
-function msRender(){
-  var all = uniq(CROWS.map(function (r){ return r.org; }));
-  var shown = all.filter(function (o){ return !CL.q || o.indexOf(CL.q) >= 0; });
-  document.getElementById('msCount').textContent = '共 ' + all.length + ' 家';
-  document.getElementById('msList').innerHTML = shown.length
-    ? shown.map(function (o){
-        return '<label><input type="checkbox" data-morg="' + esc(o) + '"' +
-          (CL.orgs.indexOf(o) >= 0 ? ' checked' : '') + '><span>' + esc(o) + '</span></label>';
-      }).join('')
-    : '<div class="none">没有匹配的机构</div>';
-  var allCk = document.getElementById('msAll');
-  allCk.checked = shown.length > 0 && shown.every(function (o){ return CL.orgs.indexOf(o) >= 0; });
-  allCk.indeterminate = shown.some(function (o){ return CL.orgs.indexOf(o) >= 0; }) && !allCk.checked;
-  var txt = CL.orgs.length === 0 ? '全部机构' : (CL.orgs.length === 1 ? CL.orgs[0] : CL.orgs.length + ' 家机构');
-  document.querySelector('#msBox .msTxt').textContent = txt;
-  document.querySelector('#msBox .msTxt').title = CL.orgs.join('、');
-}
-
-function clRender(){
-  var rows = clFiltered();
-  var maxP = Math.max(1, Math.ceil(rows.length / CL.size));
-  if (CL.page > maxP) CL.page = maxP;
-  var start = (CL.page - 1) * CL.size;
-  var pageRows = rows.slice(start, start + CL.size);
-
-  var tb = document.getElementById('cloudTb');
-  if (!pageRows.length){
-    tb.innerHTML = '<tr><td colspan="10"><div class="empty2">没有符合条件的数据</div></td></tr>';
-  } else {
-    tb.innerHTML = pageRows.map(function (r){
-      var on = !!CL.sel[r.id];
-      return '<tr><td class="cc"><input type="checkbox" data-crow="' + r.id + '"' + (on ? ' checked' : '') + '></td>'
-        + '<td class="el" title="' + esc(r.org) + '">' + esc(r.org) + '</td>'
-        + '<td>' + esc(r.dev) + '</td>'
-        + '<td class="el" title="' + esc(r.name) + '">' + esc(r.name) + '</td>'
-        + '<td>' + esc(r.pat) + '</td><td>' + esc(r.study) + '</td>'
-        + '<td>' + esc(r.time) + '</td><td>' + esc(r.utime) + '</td>'
-        + '<td class="el" title="' + esc(r.uid) + '">' + esc(r.uid) + '</td>'
-        + '<td><a class="lnk2" data-clv="' + r.id + '">阅片</a><a class="lnk2" data-cld="' + r.id + '">详情</a></td></tr>';
-    }).join('');
-  }
-  var selN = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; }).length;
-  document.getElementById('cloudSel').textContent = '已选 ' + selN + ' 条';
-  document.getElementById('cInfo').textContent = '共 ' + rows.length + ' 条';
-
-  var p = '<button data-cp="' + (CL.page - 1) + '"' + (CL.page <= 1 ? ' disabled' : '') + '>‹</button>';
-  var nums = [];
-  for (var n = 1; n <= maxP; n++) if (n <= 3 || n === maxP || Math.abs(n - CL.page) <= 1) nums.push(n);
-  var last = 0;
-  nums.forEach(function (n){
-    if (last && n - last > 1) p += '<span>…</span>';
-    p += '<button data-cp="' + n + '" class="' + (n === CL.page ? 'on' : '') + '">' + n + '</button>';
-    last = n;
-  });
-  p += '<button data-cp="' + (CL.page + 1) + '"' + (CL.page >= maxP ? ' disabled' : '') + '>›</button>';
-  document.getElementById('cPages').innerHTML = p;
-
-  var ck = document.getElementById('ckPage');
-  ck.checked = pageRows.length > 0 && pageRows.every(function (r){ return CL.sel[r.id]; });
-  ck.indeterminate = pageRows.some(function (r){ return CL.sel[r.id]; }) && !ck.checked;
-}
-
-function openCloud(){
-  CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
-         from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
-  ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo','msQ'].forEach(function (id){
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('cSize').value = '10';
-  document.getElementById('msPanel').classList.add('hidden');
-  document.getElementById('cloudErr').textContent = '';
-  msRender(); clRender();
-  document.getElementById('mkCloud').classList.remove('hidden');
-}
-function closeCloud(){
-  document.getElementById('mkCloud').classList.add('hidden');
-  document.getElementById('msPanel').classList.add('hidden');
-}
-function cloudConfirm(){
-  var ids = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; });
-  var err = document.getElementById('cloudErr');
-  if (!ids.length){ err.textContent = '请先勾选需要导入的数据'; return; }
-  err.textContent = '';
-  var rows = ids.map(function (id){ return CROWS.filter(function (x){ return x.id === id; })[0]; });
-  var orgs = [];
-  rows.forEach(function (r){ if (orgs.indexOf(r.org) < 0) orgs.push(r.org); });
-  closeCloud();
-  /* 生成补发批次，交给外层「补发记录」展示 */
-  try {
-    if (window.parent && typeof window.parent.addBatch === 'function'){
-      var bid = window.parent.addBatch({
-        org: orgs.length === 1 ? orgs[0] : orgs[0] + ' 等 ' + orgs.length + ' 家',
-        dev: rows[0].dev,
-        rows: rows.map(function (r){
-          return { pat: r.pat, study: r.study, uid: r.uid, time: r.time };
-        })
-      });
-      toast('云导入已提交：共 ' + rows.length + ' 条，可在「补发记录」查看发起进度');
-      return;
-    }
-  } catch (e) {}
-  toast('云导入已提交：共 ' + rows.length + ' 条数据（示意）');
-}
-
 /* ---------- 绑定 ---------- */
 (function init(){
   TOOLS.forEach(function (t){ document.getElementById('fTool').insertAdjacentHTML('beforeend', '<option>' + esc(t) + '</option>'); });
@@ -992,7 +717,6 @@ function cloudConfirm(){
   document.addEventListener('click', function (){
     document.getElementById('gearMenu').classList.add('hidden');
     document.getElementById('ddMenu').classList.add('hidden');
-    document.getElementById('msPanel').classList.add('hidden');
   });
 
   document.getElementById('btnCalc').onclick = function (e){
@@ -1081,82 +805,6 @@ function cloudConfirm(){
   document.getElementById('drwRefresh').onclick = function (){ renderDrw(); toast('已刷新生命周期'); };
 
   /* 云导入 */
-  document.getElementById('btnCloud').onclick = openCloud;
-  document.getElementById('msBox').onclick = function (e){
-    e.stopPropagation();
-    document.getElementById('msPanel').classList.toggle('hidden');
-  };
-  document.getElementById('msPanel').onclick = function (e){ e.stopPropagation(); };
-  document.getElementById('msQ').oninput = function (){ CL.q = this.value.trim(); msRender(); };
-  document.getElementById('msAll').onchange = function (){
-    var all = uniq(CROWS.map(function (r){ return r.org; })).filter(function (o){ return !CL.q || o.indexOf(CL.q) >= 0; });
-    var on = this.checked;
-    all.forEach(function (o){
-      var k = CL.orgs.indexOf(o);
-      if (on && k < 0) CL.orgs.push(o);
-      if (!on && k >= 0) CL.orgs.splice(k, 1);
-    });
-    msRender();
-  };
-  document.getElementById('msList').onchange = function (e){
-    var o = e.target.getAttribute && e.target.getAttribute('data-morg');
-    if (!o) return;
-    var k = CL.orgs.indexOf(o);
-    if (e.target.checked && k < 0) CL.orgs.push(o);
-    if (!e.target.checked && k >= 0) CL.orgs.splice(k, 1);
-    msRender();
-  };
-  document.getElementById('cfQuery').onclick = function (){
-    CL.dev = document.getElementById('cfDev').value;
-    CL.name = document.getElementById('cfName').value.trim();
-    CL.pat = document.getElementById('cfPat').value.trim();
-    CL.study = document.getElementById('cfStudy').value.trim();
-    CL.uid = document.getElementById('cfUid').value.trim();
-    CL.from = document.getElementById('cfFrom').value.replace('T', ' ');
-    CL.to = document.getElementById('cfTo').value.replace('T', ' ');
-    CL.ufrom = document.getElementById('cuFrom').value.replace('T', ' ');
-    CL.uto = document.getElementById('cuTo').value.replace('T', ' ');
-    CL.page = 1; CL.sel = {}; clRender();
-  };
-  document.getElementById('cfReset').onclick = function (){
-    ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo'].forEach(function (id){
-      document.getElementById(id).value = '';
-    });
-    CL.dev = CL.name = CL.pat = CL.study = CL.uid = '';
-    CL.from = CL.to = CL.ufrom = CL.uto = '';
-    CL.page = 1; CL.sel = {}; CL.q = '';
-    document.getElementById('msQ').value = '';
-    msRender(); clRender();
-  };
-  document.getElementById('cloudTb').onclick = function (e){
-    var t = e.target;
-    var ck = t.getAttribute && t.getAttribute('data-crow');
-    if (ck){ CL.sel[ck] = t.checked; clRender(); return; }
-    var v = t.getAttribute && (t.getAttribute('data-clv') || t.getAttribute('data-cld'));
-    if (v){
-      var r = CROWS.filter(function (x){ return x.id === v; })[0];
-      toast((t.getAttribute('data-clv') ? '打开阅片：' : '查看详情：') + r.study + '（示意）');
-    }
-  };
-  document.getElementById('ckPage').onclick = function (){
-    var rows = clFiltered().slice((CL.page - 1) * CL.size, CL.page * CL.size);
-    var on = this.checked;
-    rows.forEach(function (r){ CL.sel[r.id] = on; });
-    clRender();
-  };
-  document.getElementById('cPages').onclick = function (e){
-    var p = e.target.getAttribute && e.target.getAttribute('data-cp');
-    if (p){ CL.page = +p; clRender(); }
-  };
-  document.getElementById('cSize').onchange = function (){ CL.size = +this.value; CL.page = 1; clRender(); };
-  document.getElementById('cJump').onchange = function (){
-    var n = parseInt(this.value, 10);
-    if (n > 0){ CL.page = n; clRender(); }
-    this.value = '';
-  };
-  document.getElementById('btnCloudOk').onclick = cloudConfirm;
-  [].forEach.call(document.querySelectorAll('[data-cx]'), function (x){ x.onclick = closeCloud; });
-  document.getElementById('mkCloud').onclick = function (e){ if (e.target === this) closeCloud(); };
 
   render();
 })();
@@ -2084,7 +1732,7 @@ renderAll();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>补发记录 · MIIA-AI</title>
+<title>数据补发 · MIIA-AI</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -2160,13 +1808,83 @@ td.cc,th.cc{width:44px;text-align:center}
 .toast{position:fixed;left:50%;top:64px;transform:translateX(-50%) translateY(-8px);background:#333;color:#fff;
   padding:9px 16px;border-radius:4px;font-size:12.5px;opacity:0;pointer-events:none;transition:.22s;z-index:90}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.cdlg{background:#fff;border-radius:6px;width:min(1480px,95vw);height:88vh;display:flex;flex-direction:column;
+  box-shadow:0 16px 48px rgba(0,0,0,.22);overflow:hidden}
+.cdh{display:flex;align-items:center;padding:13px 18px;border-bottom:1px solid #EBEEF5;flex:0 0 auto}
+.cdh h3{font-size:15px;font-weight:600;color:#303133}
+.cdh .x{margin-left:auto;width:24px;height:24px;line-height:22px;text-align:center;border-radius:4px;
+  color:#909399;cursor:pointer;font-size:16px}
+.cdh .x:hover{background:#F5F7FA;color:#606266}
+.cfilters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 16px;padding:14px 18px 10px;
+  border-bottom:1px solid #EBEEF5;flex:0 0 auto}
+.cf{min-width:0}
+.cf.w2{grid-column:span 2}
+.cf label{display:block;font-size:12px;color:#606266;margin-bottom:5px}
+.cf input:not([type]),.cf select,.cf .msBox{width:100%;height:30px;border:1px solid #DCDFE6;border-radius:4px;
+  padding:0 8px;font-size:12.5px;color:#303133;background:#fff;outline:none;font-family:inherit}
+.cf input:focus,.cf select:focus{border-color:#409EFF}
+.rng{display:flex;align-items:center;gap:6px}
+.rng input{flex:1;min-width:0;height:30px;border:1px solid #DCDFE6;border-radius:4px;padding:0 7px;
+  font-size:12px;color:#303133;outline:none;font-family:inherit;background:#fff}
+.rng input:focus{border-color:#409EFF}
+.rng span{color:#C0C4CC;font-size:12px}
+.cf.cbtns{display:flex;align-items:flex-end;justify-content:flex-end;gap:8px}
+.cbtn{height:30px;padding:0 14px;border:1px solid #DCDFE6;background:#fff;border-radius:4px;color:#606266;font-size:12.5px}
+.cbtn:hover{border-color:#409EFF;color:#409EFF}
+.cbtn.pri{background:#409EFF;border-color:#409EFF;color:#fff}
+.cbtn.pri:hover{background:#66B1FF;color:#fff}
+.mselect{position:relative}
+.msBox{display:flex;align-items:center;cursor:pointer;gap:6px}
+.msBox .msTxt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#303133}
+.msBox i{font-style:normal;color:#C0C4CC;font-size:11px}
+.msPanel{position:absolute;left:0;top:34px;width:100%;min-width:250px;background:#fff;border:1px solid #E4E7ED;
+  border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.12);z-index:20;padding:8px}
+.msPanel.hidden{display:none}
+.msQ{width:100%;height:28px;border:1px solid #DCDFE6;border-radius:4px;padding:0 8px;font-size:12px;
+  outline:none;font-family:inherit;margin-bottom:6px}
+.msQ:focus{border-color:#409EFF}
+.msAll{display:flex;align-items:center;gap:7px;padding:5px 4px;font-size:12.5px;color:#606266;cursor:pointer;
+  border-bottom:1px solid #F2F6FC;margin-bottom:4px}
+.msAll em{font-style:normal;color:#909399;font-size:11.5px;margin-left:auto}
+.msList{max-height:190px;overflow-y:auto}
+.msList label{display:flex;align-items:center;gap:7px;padding:5px 4px;font-size:12.5px;color:#303133;cursor:pointer}
+.msList label:hover{background:#F5F7FA}
+.msList .none{padding:12px;text-align:center;color:#909399;font-size:12px}
+.ctable{flex:1;min-height:0;display:flex;padding:0 18px}
+.ctw{flex:1;min-height:0;overflow:auto;border:1px solid #EBEEF5;border-radius:4px}
+.ctw table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+.ctw thead th{position:sticky;top:0;z-index:2;background:#F5F7FA;color:#606266;font-weight:500;
+  text-align:left;padding:8px 10px;border-bottom:1px solid #EBEEF5;white-space:nowrap}
+.ctw tbody td{padding:8px 10px;border-bottom:1px solid #F2F6FC;color:#303133;white-space:nowrap}
+.ctw tbody tr:hover td{background:#F5F7FA}
+.ctw th.cc,.ctw td.cc{width:40px;text-align:center}
+.ctw td.el{max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.ctw a.lnk2{color:#409EFF;cursor:pointer;font-size:12.5px}
+.ctw a.lnk2+a.lnk2{margin-left:10px}
+.ctw .empty2{padding:40px 0;text-align:center;color:#909399;font-size:12.5px}
+.cpager{display:flex;align-items:center;gap:10px;padding:9px 18px;flex:0 0 auto}
+.cinfo{font-size:12.5px;color:#606266}
+.cpages{display:flex;gap:6px;margin-left:auto}
+.cpages button{min-width:26px;height:26px;border:1px solid #DCDFE6;background:#fff;border-radius:4px;
+  color:#606266;font-size:12.5px;cursor:pointer}
+.cpages button.on{background:#409EFF;border-color:#409EFF;color:#fff}
+.cpages button:disabled{color:#C0C4CC;cursor:not-allowed}
+.cpages span{color:#C0C4CC;line-height:26px;font-size:12px}
+.csize{height:26px;border:1px solid #DCDFE6;border-radius:4px;font-size:12px;color:#606266;padding:0 4px}
+.cjump{font-size:12.5px;color:#606266;display:flex;align-items:center;gap:5px}
+.cjump input{width:44px;height:26px;border:1px solid #DCDFE6;border-radius:4px;text-align:center;
+  font-size:12.5px;outline:none;font-family:inherit}
+.cdf{display:flex;align-items:center;gap:10px;padding:11px 18px;border-top:1px solid #EBEEF5;flex:0 0 auto}
+.csel{font-size:12.5px;color:#606266;margin-right:auto}
+.cerr{font-size:12px;color:#F56C6C;margin-right:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hd">
-    <h1>补发记录</h1>
+    <h1>数据补发</h1>
     <div class="sp"></div>
+    <button class="btn pri" id="btnCloud">云导入</button>
     <button class="btn" id="btnRefresh">刷新</button>
   </div>
 
@@ -2224,6 +1942,70 @@ td.cc,th.cc{width:44px;text-align:center}
     </div></div>
     <div class="dpager" id="dPg"></div>
     <div class="df"><button class="btn" data-dx>关闭</button></div>
+  </div>
+</div>
+
+<div class="mask hidden" id="mkCloud">
+  <div class="cdlg">
+    <div class="cdh"><h3>云导入</h3><div class="x" data-cx>×</div></div>
+
+    <div class="cfilters">
+      <div class="cf">
+        <label>机构名称</label>
+        <div class="mselect" id="mOrg">
+          <div class="msBox" id="msBox"><span class="msTxt">全部机构</span><i>▾</i></div>
+          <div class="msPanel hidden" id="msPanel">
+            <input class="msQ" id="msQ" placeholder="搜索机构名称" autocomplete="off">
+            <label class="msAll"><input type="checkbox" id="msAll"><span>全选</span><em id="msCount"></em></label>
+            <div class="msList" id="msList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cf"><label>设备</label>
+        <select id="cfDev"><option value="">请选择</option><option>CT</option><option>MR</option><option>DR</option></select>
+      </div>
+      <div class="cf"><label>姓名</label><input id="cfName" placeholder="请输入"></div>
+      <div class="cf"><label>患者号</label><input id="cfPat" placeholder="请输入"></div>
+      <div class="cf"><label>检查号</label><input id="cfStudy" placeholder="请输入"></div>
+      <div class="cf"><label>UID</label><input id="cfUid" placeholder="请输入"></div>
+      <div class="cf w2"><label>检查时间</label>
+        <div class="rng"><input type="datetime-local" step="1" id="cfFrom"><span>→</span>
+          <input type="datetime-local" step="1" id="cfTo"></div>
+      </div>
+      <div class="cf w2"><label>上传时间</label>
+        <div class="rng"><input type="datetime-local" step="1" id="cuFrom"><span>→</span>
+          <input type="datetime-local" step="1" id="cuTo"></div>
+      </div>
+      <div class="cf cbtns">
+        <button class="cbtn" id="cfReset">重置</button>
+        <button class="cbtn pri" id="cfQuery">查询</button>
+      </div>
+    </div>
+
+    <div class="ctable"><div class="ctw">
+      <table id="cloudTbl">
+        <thead><tr>
+          <th class="cc"><input type="checkbox" id="ckPage"></th>
+          <th>机构名称</th><th>设备</th><th>姓名</th><th>患者号</th><th>检查号</th>
+          <th>检查时间</th><th>上传时间</th><th>UID</th><th>操作</th>
+        </tr></thead>
+        <tbody id="cloudTb"></tbody>
+      </table>
+    </div></div>
+
+    <div class="cpager">
+      <span class="cinfo" id="cInfo">共 0 条</span>
+      <div class="cpages" id="cPages"></div>
+      <select id="cSize" class="csize"><option value="10">10条/页</option><option value="20">20条/页</option><option value="50">50条/页</option></select>
+      <span class="cjump">前往<input id="cJump">页</span>
+    </div>
+
+    <div class="cdf">
+      <span class="csel" id="cloudSel">已选 0 条</span>
+      <span class="cerr" id="cloudErr"></span>
+      <button class="cbtn" data-cx>关闭</button>
+      <button class="cbtn pri" id="btnCloudOk">确认</button>
+    </div>
   </div>
 </div>
 
@@ -2572,6 +2354,223 @@ window.PB = PB;
 </script>
 </body>
 </html>
+<script>
+/* ============ 云导入（数据补发入口） ============ */
+var CNAMES = ['ZhangYuXi','WANG HU','李红','陈刚','刘洋','赵敏','孙健','周强'];
+var CROWS = (function(){
+  var out = [], base = new Date(2026, 9, 5, 13, 35, 13);
+  for (var i = 0; i < 4096; i++){
+    var t = new Date(base.getTime() - i * 37 * 60000);
+    var u = new Date(t.getTime() + (5 + i % 9) * 3600000);
+    out.push({
+      id: 'C' + i, org: ORGS[i % ORGS.length], dev: DEVS[i % DEVS.length],
+      name: CNAMES[i % CNAMES.length] + (i % 6 === 0 ? '…' : ''),
+      pat: '00005' + (22391 + i * 3),
+      study: 'DX01' + (34594 + i),
+      time: fstamp(t), utime: fstamp(u),
+      uid: '1.2.840.40823.1.1.1.' + (100000 + i * 7) + '.' + (i % 13)
+    });
+  }
+  return out;
+})();
+
+var CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
+           from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
+
+function clFiltered(){
+  var f = function (v, s){ return !s || String(v).toUpperCase().indexOf(String(s).toUpperCase()) >= 0; };
+  return CROWS.filter(function (r){
+    if (CL.orgs.length && CL.orgs.indexOf(r.org) < 0) return false;
+    if (CL.dev && r.dev !== CL.dev) return false;
+    if (!f(r.name, CL.name) || !f(r.pat, CL.pat) || !f(r.study, CL.study) || !f(r.uid, CL.uid)) return false;
+    if (CL.from && r.time < CL.from) return false;
+    if (CL.to   && r.time > CL.to)   return false;
+    if (CL.ufrom && r.utime < CL.ufrom) return false;
+    if (CL.uto   && r.utime > CL.uto)   return false;
+    return true;
+  });
+}
+
+function msRender(){
+  var all = uniq(CROWS.map(function (r){ return r.org; }));
+  var shown = all.filter(function (o){ return !CL.q || o.indexOf(CL.q) >= 0; });
+  document.getElementById('msCount').textContent = '共 ' + all.length + ' 家';
+  document.getElementById('msList').innerHTML = shown.length
+    ? shown.map(function (o){
+        return '<label><input type="checkbox" data-morg="' + esc(o) + '"' +
+          (CL.orgs.indexOf(o) >= 0 ? ' checked' : '') + '><span>' + esc(o) + '</span></label>';
+      }).join('')
+    : '<div class="none">没有匹配的机构</div>';
+  var allCk = document.getElementById('msAll');
+  allCk.checked = shown.length > 0 && shown.every(function (o){ return CL.orgs.indexOf(o) >= 0; });
+  allCk.indeterminate = shown.some(function (o){ return CL.orgs.indexOf(o) >= 0; }) && !allCk.checked;
+  var txt = CL.orgs.length === 0 ? '全部机构' : (CL.orgs.length === 1 ? CL.orgs[0] : CL.orgs.length + ' 家机构');
+  document.querySelector('#msBox .msTxt').textContent = txt;
+  document.querySelector('#msBox .msTxt').title = CL.orgs.join('、');
+}
+
+function clRender(){
+  var rows = clFiltered();
+  var maxP = Math.max(1, Math.ceil(rows.length / CL.size));
+  if (CL.page > maxP) CL.page = maxP;
+  var start = (CL.page - 1) * CL.size;
+  var pageRows = rows.slice(start, start + CL.size);
+
+  var tb = document.getElementById('cloudTb');
+  if (!pageRows.length){
+    tb.innerHTML = '<tr><td colspan="10"><div class="empty2">没有符合条件的数据</div></td></tr>';
+  } else {
+    tb.innerHTML = pageRows.map(function (r){
+      var on = !!CL.sel[r.id];
+      return '<tr><td class="cc"><input type="checkbox" data-crow="' + r.id + '"' + (on ? ' checked' : '') + '></td>'
+        + '<td class="el" title="' + esc(r.org) + '">' + esc(r.org) + '</td>'
+        + '<td>' + esc(r.dev) + '</td>'
+        + '<td class="el" title="' + esc(r.name) + '">' + esc(r.name) + '</td>'
+        + '<td>' + esc(r.pat) + '</td><td>' + esc(r.study) + '</td>'
+        + '<td>' + esc(r.time) + '</td><td>' + esc(r.utime) + '</td>'
+        + '<td class="el" title="' + esc(r.uid) + '">' + esc(r.uid) + '</td>'
+        + '<td><a class="lnk2" data-clv="' + r.id + '">阅片</a><a class="lnk2" data-cld="' + r.id + '">详情</a></td></tr>';
+    }).join('');
+  }
+
+  var selN = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; }).length;
+  document.getElementById('cloudSel').textContent = '已选 ' + selN + ' 条';
+  document.getElementById('cInfo').textContent = '共 ' + rows.length + ' 条';
+
+  var p = '<button data-cp="' + (CL.page - 1) + '"' + (CL.page <= 1 ? ' disabled' : '') + '>‹</button>';
+  var nums = [];
+  for (var n = 1; n <= maxP; n++) if (n <= 3 || n === maxP || Math.abs(n - CL.page) <= 1) nums.push(n);
+  var last = 0;
+  nums.forEach(function (n){
+    if (last && n - last > 1) p += '<span>…</span>';
+    p += '<button data-cp="' + n + '" class="' + (n === CL.page ? 'on' : '') + '">' + n + '</button>';
+    last = n;
+  });
+  p += '<button data-cp="' + (CL.page + 1) + '"' + (CL.page >= maxP ? ' disabled' : '') + '>›</button>';
+  document.getElementById('cPages').innerHTML = p;
+
+  var ck = document.getElementById('ckPage');
+  ck.checked = pageRows.length > 0 && pageRows.every(function (r){ return CL.sel[r.id]; });
+  ck.indeterminate = pageRows.some(function (r){ return CL.sel[r.id]; }) && !ck.checked;
+}
+
+function openCloud(){
+  CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
+         from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
+  ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo','msQ'].forEach(function (id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('cSize').value = '10';
+  document.getElementById('msPanel').classList.add('hidden');
+  document.getElementById('cloudErr').textContent = '';
+  msRender(); clRender();
+  document.getElementById('mkCloud').classList.remove('hidden');
+}
+function closeCloud(){
+  document.getElementById('mkCloud').classList.add('hidden');
+  document.getElementById('msPanel').classList.add('hidden');
+}
+function cloudConfirm(){
+  var ids = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; });
+  var err = document.getElementById('cloudErr');
+  if (!ids.length){ err.textContent = '请先勾选需要导入的数据'; return; }
+  var rows = ids.map(function (id){ return CROWS.filter(function (x){ return x.id === id; })[0]; });
+  var orgs = [];
+  rows.forEach(function (r){ if (orgs.indexOf(r.org) < 0) orgs.push(r.org); });
+  closeCloud();
+  addBatch({
+    org: orgs.length === 1 ? orgs[0] : orgs[0] + ' 等 ' + orgs.length + ' 家',
+    dev: rows[0].dev,
+    rows: rows.map(function (r){ return { pat: r.pat, study: r.study, uid: r.uid, time: r.time }; })
+  });
+  renderBatch();
+  toast('云导入已提交：共 ' + rows.length + ' 条，可在明细中查看发起进度');
+}
+
+(function(){
+  document.getElementById('btnCloud').onclick = openCloud;
+  document.getElementById('msBox').onclick = function (e){
+    e.stopPropagation();
+    document.getElementById('msPanel').classList.toggle('hidden');
+  };
+  document.getElementById('msPanel').onclick = function (e){ e.stopPropagation(); };
+  document.getElementById('msQ').oninput = function (){ CL.q = this.value.trim(); msRender(); };
+  document.getElementById('msAll').onchange = function (){
+    var all = uniq(CROWS.map(function (r){ return r.org; })).filter(function (o){ return !CL.q || o.indexOf(CL.q) >= 0; });
+    var on = this.checked;
+    all.forEach(function (o){
+      var k = CL.orgs.indexOf(o);
+      if (on && k < 0) CL.orgs.push(o);
+      if (!on && k >= 0) CL.orgs.splice(k, 1);
+    });
+    msRender();
+  };
+  document.getElementById('msList').onchange = function (e){
+    var o = e.target.getAttribute && e.target.getAttribute('data-morg');
+    if (!o) return;
+    var k = CL.orgs.indexOf(o);
+    if (e.target.checked && k < 0) CL.orgs.push(o);
+    if (!e.target.checked && k >= 0) CL.orgs.splice(k, 1);
+    msRender();
+  };
+  document.getElementById('cfQuery').onclick = function (){
+    CL.dev = document.getElementById('cfDev').value;
+    CL.name = document.getElementById('cfName').value.trim();
+    CL.pat = document.getElementById('cfPat').value.trim();
+    CL.study = document.getElementById('cfStudy').value.trim();
+    CL.uid = document.getElementById('cfUid').value.trim();
+    CL.from = document.getElementById('cfFrom').value.replace('T', ' ');
+    CL.to = document.getElementById('cfTo').value.replace('T', ' ');
+    CL.ufrom = document.getElementById('cuFrom').value.replace('T', ' ');
+    CL.uto = document.getElementById('cuTo').value.replace('T', ' ');
+    CL.page = 1; CL.sel = {}; clRender();
+  };
+  document.getElementById('cfReset').onclick = function (){
+    ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo'].forEach(function (id){
+      document.getElementById(id).value = '';
+    });
+    CL.dev = CL.name = CL.pat = CL.study = CL.uid = '';
+    CL.from = CL.to = CL.ufrom = CL.uto = '';
+    CL.page = 1; CL.sel = {}; CL.q = '';
+    document.getElementById('msQ').value = '';
+    msRender(); clRender();
+  };
+  document.getElementById('cloudTb').onclick = function (e){
+    var t = e.target;
+    var ck = t.getAttribute && t.getAttribute('data-crow');
+    if (ck){ CL.sel[ck] = t.checked; clRender(); return; }
+    var v = t.getAttribute && (t.getAttribute('data-clv') || t.getAttribute('data-cld'));
+    if (v){
+      var r = CROWS.filter(function (x){ return x.id === v; })[0];
+      toast((t.getAttribute('data-clv') ? '打开阅片：' : '查看详情：') + r.study + '（示意）');
+    }
+  };
+  document.getElementById('ckPage').onclick = function (){
+    var rows = clFiltered().slice((CL.page - 1) * CL.size, CL.page * CL.size);
+    var on = this.checked;
+    rows.forEach(function (r){ CL.sel[r.id] = on; });
+    clRender();
+  };
+  document.getElementById('cPages').onclick = function (e){
+    var p = e.target.getAttribute && e.target.getAttribute('data-cp');
+    if (p){ CL.page = +p; clRender(); }
+  };
+  document.getElementById('cSize').onchange = function (){ CL.size = +this.value; CL.page = 1; clRender(); };
+  document.getElementById('cJump').onchange = function (){
+    var n = parseInt(this.value, 10);
+    if (n > 0){ CL.page = n; clRender(); }
+    this.value = '';
+  };
+  document.getElementById('btnCloudOk').onclick = cloudConfirm;
+  [].forEach.call(document.querySelectorAll('[data-cx]'), function (x){ x.onclick = closeCloud; });
+  document.getElementById('mkCloud').onclick = function (e){ if (e.target === this) closeCloud(); };
+  document.addEventListener('click', function (){
+    document.getElementById('msPanel').classList.add('hidden');
+  });
+})();
+</script>
+</body>
+</html>
 </template>
 
 <script>
@@ -2585,29 +2584,8 @@ function pageHtml(key){
   return html;
 }
 
-/* 云导入生成的新批次先排队，进入「补发记录」时注入 */
-var PENDING = [], SEQ = 0;
-function pad2(n){ return n < 10 ? '0' + n : '' + n; }
-window.addBatch = function (o){
-  var d = new Date();
-  var id = 'BF' + d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate())
-         + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(++SEQ);
-  PENDING.push({ id: id, o: o });
-  return id;
-};
-function flushPending(win){
-  if (!win || typeof win.addBatch !== 'function') return;
-  PENDING.forEach(function (p){ win.addBatch(p.o, p.id); });
-  PENDING = [];
-}
-
 function showPage(key, name){
   var f = document.getElementById('frame');
-  if (key === 'batch'){
-    f.onload = function (){ flushPending(f.contentWindow); };
-  } else {
-    f.onload = null;
-  }
   f.srcdoc = pageHtml(key);
   document.getElementById('crumb').innerHTML = '运维管理 / <b>' + name + '</b>';
 }
@@ -2626,7 +2604,7 @@ function showPage(key, name){
       document.getElementById('subOps').classList.remove('hide');
       var v = m.getAttribute('data-v');
       if (v === 'task') showPage('task', '任务管理');
-      else if (v === 'batch') showPage('batch', '补发记录');
+      else if (v === 'batch') showPage('batch', '数据补发');
       else showPage('monitor', '数据监控');
     };
   });
