@@ -71,6 +71,13 @@ iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
       <div class="mi" data-v="monitor">
         <svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 4-6 5 5"/><path d="M3 21h18"/></svg>数据监控</div>
     </div>
+    <div class="mi" id="miAi">
+      <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg>AI工具管理<span class="arr">▸</span>
+    </div>
+    <div class="sub hide" id="subAi">
+      <div class="mi" data-v="shelf">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg>上架中心</div>
+    </div>
     <div class="tip">当前版本 V2.49.0<br>后续模块持续补充</div>
   </div>
 
@@ -2572,39 +2579,524 @@ function cloudConfirm(){
 </body>
 </html>
 </template>
+<template id="tplShelf"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>上架中心 · MIIA-AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;background:#F0F2F5;color:#333;
+  font-size:13px;display:flex;flex-direction:column;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+.wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px 14px}
+.hd{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex:0 0 auto}
+.hd h1{font-size:16px;font-weight:600;color:#303133}
+.hd .sp{flex:1}
+.btn{height:30px;padding:0 13px;border:1px solid #D9D9D9;background:#fff;border-radius:4px;color:#595959;font-size:12.5px}
+.btn:hover{border-color:#1890FF;color:#1890FF}
+.btn.pri{background:#1890FF;border-color:#1890FF;color:#fff}
+.btn.pri:hover{background:#40A9FF;color:#fff}
+.fbar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;background:#fff;border-radius:4px;padding:10px 12px;
+  margin-bottom:10px;flex:0 0 auto;border:1px solid #F0F0F0}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi label{font-size:12px;color:#8C8C8C}
+.fi input,.fi select{height:30px;border:1px solid #D9D9D9;border-radius:4px;padding:0 8px;font-size:12.5px;
+  color:#333;background:#fff;outline:none;font-family:inherit}
+.fi input{width:150px}
+.fi input:focus,.fi select:focus{border-color:#1890FF}
+.fbar .sp{flex:1}
+.card{background:#fff;border-radius:4px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid #F0F0F0}
+.tw{flex:1;min-height:0;overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+thead th{position:sticky;top:0;z-index:2;background:#F5F7FA;color:#333;font-weight:600;text-align:left;
+  padding:9px 10px;border-bottom:1px solid #EBEEF5;white-space:nowrap}
+tbody td{padding:9px 10px;border-bottom:1px solid #F0F0F0;color:#333;vertical-align:middle;white-space:nowrap}
+tbody tr:hover td{background:#F5F9FF}
+.ell{display:block;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lnk{color:#1890FF;cursor:pointer;font-size:12.5px}
+.lnk:hover{text-decoration:underline}
+.lnk+.lnk{margin-left:11px}
+.lnk.danger{color:#FF4D4F}
+.sw{width:38px;height:20px;border-radius:10px;background:#D9D9D9;position:relative;display:inline-block;
+  cursor:pointer;transition:.16s;vertical-align:middle}
+.sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.16s}
+.sw.on{background:#1890FF}
+.sw.on i{left:20px}
+.pg{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 12px;border-top:1px solid #F0F0F0;
+  color:#8C8C8C;font-size:12.5px}
+.pg .sp{flex:1}
+.pg .p{min-width:28px;height:28px;border:1px solid #D9D9D9;background:#fff;border-radius:4px;color:#595959;font-size:12.5px}
+.pg .p.on{background:#1890FF;border-color:#1890FF;color:#fff}
+.pg .p[disabled]{color:#D9D9D9;cursor:not-allowed}
+.pg .gap{color:#BFBFBF}
+.empty{padding:50px 0;text-align:center;color:#BFBFBF}
+/* 数据要求弹窗 */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50}
+.mask.hidden{display:none}
+.dlg{background:#fff;border-radius:6px;width:min(1120px,94vw);height:78vh;display:flex;flex-direction:column;
+  box-shadow:0 16px 44px rgba(0,0,0,.22);overflow:hidden}
+.dh{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid #F0F0F0;flex:0 0 auto}
+.dh h3{font-size:15px;font-weight:600;color:#303133}
+.dh .sub2{font-size:12.5px;color:#8C8C8C}
+.dh .sp{flex:1}
+.dh .x{width:24px;height:24px;line-height:22px;text-align:center;border-radius:4px;color:#BFBFBF;cursor:pointer;font-size:16px}
+.dh .x:hover{background:#F5F5F5;color:#595959}
+.dbody{flex:1;min-height:0;display:flex}
+.dleft{width:220px;flex:0 0 220px;border-right:1px solid #F0F0F0;display:flex;flex-direction:column;background:#FAFBFD}
+.dleft .lt{padding:10px 12px 8px;font-size:12px;color:#8C8C8C}
+.rlist{flex:1;min-height:0;overflow-y:auto}
+.ri{display:flex;align-items:center;gap:7px;padding:10px 12px;font-size:12.5px;color:#333;cursor:pointer;
+  border-left:3px solid transparent}
+.ri:hover{background:#F0F6FF}
+.ri.on{background:#E6F4FF;border-left-color:#1890FF;color:#1890FF;font-weight:600}
+.ri .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ri .tag{font-size:11px;padding:1px 6px;border-radius:8px;background:#F0F0F0;color:#8C8C8C;font-weight:400}
+.ri .tag.def{background:#FFF7E6;color:#D46B08}
+.ri .del{color:#BFBFBF;font-size:13px;padding:0 2px}
+.ri .del:hover{color:#FF4D4F}
+.ri .lock{color:#BFBFBF;font-size:12px}
+.addRule{margin:8px 12px 12px;height:30px;border:1px dashed #1890FF;background:#fff;border-radius:4px;
+  color:#1890FF;font-size:12.5px;width:calc(100% - 24px)}
+.addRule:hover{background:#F0F7FF}
+.dright{flex:1;min-width:0;display:flex;flex-direction:column}
+.drh{padding:12px 16px 6px;font-size:13px;font-weight:600;color:#303133}
+.conds{flex:1;min-height:0;overflow-y:auto;padding:0 16px 10px}
+.cond{border:1px solid #EBEEF5;border-radius:4px;margin-bottom:10px;background:#fff}
+.cond .chd{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#FAFBFC;border-bottom:1px solid #F0F0F0}
+.cond .chd b{font-size:12.5px;color:#303133}
+.cond .chd .sp{flex:1}
+.cond .chd .lnk{font-size:12px}
+.cond .cbody{display:grid;grid-template-columns:90px 1fr;gap:8px 10px;padding:10px 12px;align-items:center}
+.cond .cbody label{font-size:12.5px;color:#595959}
+.cond .cbody input,.cond .cbody select{height:30px;border:1px solid #D9D9D9;border-radius:4px;padding:0 8px;
+  font-size:12.5px;color:#333;background:#fff;outline:none;font-family:inherit;width:100%}
+.cond .cbody input:focus,.cond .cbody select:focus{border-color:#1890FF}
+.addCond{margin:0 16px 12px;height:32px;border:1px dashed #1890FF;background:#fff;border-radius:4px;color:#1890FF;
+  font-size:12.5px;width:calc(100% - 32px)}
+.addCond:hover{background:#F0F7FF}
+.dfoot{display:flex;justify-content:flex-end;gap:8px;padding:11px 16px;border-top:1px solid #F0F0F0;flex:0 0 auto}
+.toast{position:fixed;left:50%;top:64px;transform:translateX(-50%) translateY(-8px);background:#333;color:#fff;
+  padding:9px 16px;border-radius:4px;font-size:12.5px;opacity:0;pointer-events:none;transition:.22s;z-index:90}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <h1>上架中心</h1>
+    <div class="sp"></div>
+    <button class="btn" id="btnRefresh">刷新</button>
+  </div>
+
+  <div class="fbar">
+    <div class="fi"><label>厂商</label><select id="fVendor"><option value="">全部厂商</option></select></div>
+    <div class="fi"><label>模态</label><select id="fMod"><option value="">请选择</option><option>CT</option><option>MR</option><option>DR</option></select></div>
+    <div class="fi"><label>部位</label><select id="fPart"><option value="">请选择</option></select></div>
+    <div class="fi"><label>工具名称</label><input id="fName" placeholder="请输入"></div>
+    <div class="sp"></div>
+    <button class="btn" id="btnReset">重置</button>
+    <button class="btn pri" id="btnQuery">查询</button>
+  </div>
+
+  <div class="card">
+    <div class="tw">
+      <table id="tbl">
+        <thead><tr>
+          <th>序号</th><th>厂商</th><th>工具名称</th><th>工具类型</th><th>云平台</th><th>模态</th>
+          <th>部位</th><th>创建时间</th><th>启用</th><th>规则数</th><th>操作</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <div class="pg" id="pg"></div>
+  </div>
+</div>
+
+<div class="mask hidden" id="mkRule">
+  <div class="dlg">
+    <div class="dh">
+      <h3>数据要求</h3>
+      <span class="sub2" id="rSub"></span>
+      <div class="sp"></div>
+      <div class="x" data-rx>×</div>
+    </div>
+    <div class="dbody">
+      <div class="dleft">
+        <div class="lt">规则列表</div>
+        <div class="rlist" id="rList"></div>
+        <button class="addRule" id="btnAddRule">＋ 新增规则</button>
+      </div>
+      <div class="dright">
+        <div class="drh" id="rTitle">规则条件</div>
+        <div class="conds" id="rConds"></div>
+        <button class="addCond" id="btnAddCond">＋ 新增条件</button>
+      </div>
+    </div>
+    <div class="dfoot">
+      <button class="btn" data-rx>取消</button>
+      <button class="btn pri" id="btnRuleOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ---------- 基础 ---------- */
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function fstamp(d){
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' '
+       + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function uniq(a){ var r = []; a.forEach(function(x){ if (r.indexOf(x) < 0) r.push(x); }); return r; }
+function toast(m){
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
+}
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+/* ---------- 数据 ---------- */
+var VENDORS = ['达摩院','推想科技','联影智能','数坤科技','深睿医疗','汇医慧影'];
+var TOOLS = ['心血管不良事件预测','CT胸腹部骨质病变检测','肺结节筛查','骨折检测','冠脉钙化积分',
+             '骨龄评估','脑出血检测','乳腺肿块检测','肝脏分段','骨密度测量'];
+var TYPES = ['诊断','筛查','量化'];
+var CLOUDS = ['天翼云（华东）','阿里云（杭州）','华为云（北京）','腾讯云（上海）'];
+var MODS = ['CT','MR','DR'];
+var PARTS = ['胸部','颅脑','四肢及关节','腹部','心脏'];
+
+var FIELDS = [
+  ['modality', 'modality (模态)'],
+  ['sliceThickness', 'sliceThickness (层厚)'],
+  ['institutionName', 'institutionName (机构名称)'],
+  ['manufacturer', 'manufacturer (设备厂商)'],
+  ['bodyPart', 'bodyPart (检查部位)'],
+  ['studyDescription', 'studyDescription (检查描述)']
+];
+var OPS = [
+  ['contain', 'contain (包含)'],
+  ['not contain', 'not contain (不包含)'],
+  ['=', '= (等于)'],
+  ['!=', '!= (不等于)'],
+  ['<=', '<= (小于等于)'],
+  ['>=', '>= (大于等于)'],
+  ['in list', 'in list (在列表中)']
+];
+
+function defRules(mod){
+  return [
+    { id: 'r_modal', name: '模态', def: true,
+      conds: [{ field: 'modality', op: 'contain', val: mod || 'CT', note: '' }] },
+    { id: 'r_thick', name: '层厚', def: true,
+      conds: [{ field: 'sliceThickness', op: '<=', val: '3', note: '' }] }
+  ];
+}
+
+var ROWS = (function(){
+  var out = [], base = new Date(2026, 5, 29, 14, 40, 35);
+  for (var i = 0; i < 75; i++){
+    var d = new Date(base.getTime() - i * 5 * 3600000);
+    var mod = MODS[i % 3];
+    var rules = defRules(mod);
+    if (i && i % 3 === 0){
+      rules.push({ id: 'r_inst', name: '机构', def: false,
+        conds: [{ field: 'institutionName', op: 'contain', val: 'HUAXI', note: '' }] });
+    }
+    if (i && i % 7 === 0){
+      rules.push({ id: 'r_manu', name: '设备厂商', def: false,
+        conds: [{ field: 'manufacturer', op: 'in list', val: 'SIEMENS,GE', note: '' }] });
+    }
+    out.push({
+      idx: i + 1,
+      id: 'S' + i,
+      vendor: VENDORS[i % VENDORS.length],
+      tool: TOOLS[i % TOOLS.length],
+      type: TYPES[i % TYPES.length],
+      cloud: CLOUDS[i % CLOUDS.length],
+      mod: mod,
+      part: PARTS[i % PARTS.length],
+      ctime: fstamp(d),
+      on: i % 9 !== 4,
+      rules: rules
+    });
+  }
+  return out;
+})();
+
+/* ---------- 列表 ---------- */
+var S = { vendor:'', mod:'', part:'', name:'', page:1, size:10 };
+function list(){
+  return ROWS.filter(function (r){
+    if (S.vendor && r.vendor !== S.vendor) return false;
+    if (S.mod && r.mod !== S.mod) return false;
+    if (S.part && r.part !== S.part) return false;
+    if (S.name && r.tool.toUpperCase().indexOf(S.name.toUpperCase()) < 0) return false;
+    return true;
+  });
+}
+function render(){
+  var rows = list();
+  var maxP = Math.max(1, Math.ceil(rows.length / S.size));
+  if (S.page > maxP) S.page = maxP;
+  var show = rows.slice((S.page - 1) * S.size, S.page * S.size);
+  var tb = document.getElementById('tb');
+  if (!show.length){
+    tb.innerHTML = '<tr><td colspan="11"><div class="empty">没有符合条件的工具</div></td></tr>';
+  } else {
+    tb.innerHTML = show.map(function (r){
+      return '<tr>'
+        + '<td>' + r.idx + '</td>'
+        + '<td>' + esc(r.vendor) + '</td>'
+        + '<td><span class="ell" title="' + esc(r.tool) + '">' + esc(r.tool) + '</span></td>'
+        + '<td>' + esc(r.type) + '</td>'
+        + '<td>' + esc(r.cloud) + '</td>'
+        + '<td>' + esc(r.mod) + '</td>'
+        + '<td>' + esc(r.part) + '</td>'
+        + '<td>' + esc(r.ctime) + '</td>'
+        + '<td><span class="sw' + (r.on ? ' on' : '') + '" data-sw="' + r.id + '"><i></i></span></td>'
+        + '<td>' + r.rules.length + '</td>'
+        + '<td><a class="lnk" data-edit="' + r.id + '">编辑</a>'
+        + '<a class="lnk" data-rule="' + r.id + '">数据要求</a>'
+        + '<a class="lnk danger" data-del="' + r.id + '">删除</a></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  var p = '<button class="p" data-p="' + (S.page - 1) + '"' + (S.page <= 1 ? ' disabled' : '') + '>‹</button>';
+  var nums = [];
+  for (var n = 1; n <= maxP; n++) if (n <= 3 || n === maxP || Math.abs(n - S.page) <= 1) nums.push(n);
+  var last = 0;
+  nums.forEach(function (n){
+    if (last && n - last > 1) p += '<span class="gap">…</span>';
+    p += '<button class="p' + (n === S.page ? ' on' : '') + '" data-p="' + n + '">' + n + '</button>';
+    last = n;
+  });
+  p += '<button class="p" data-p="' + (S.page + 1) + '"' + (S.page >= maxP ? ' disabled' : '') + '>›</button>';
+  document.getElementById('pg').innerHTML = '<span>共 <b>' + rows.length + '</b> 条</span><span class="sp"></span>' + p;
+}
+
+/* ---------- 数据要求 ---------- */
+var R = { rowId:'', rules:[], cur:0 };
+
+function fieldOpts(sel){
+  return FIELDS.map(function (f){
+    return '<option value="' + f[0] + '"' + (f[0] === sel ? ' selected' : '') + '>' + esc(f[1]) + '</option>';
+  }).join('');
+}
+function opOpts(sel){
+  return OPS.map(function (o){
+    return '<option value="' + o[0] + '"' + (o[0] === sel ? ' selected' : '') + '>' + esc(o[1]) + '</option>';
+  }).join('');
+}
+
+function renderRules(){
+  var box = document.getElementById('rList');
+  box.innerHTML = R.rules.map(function (r, i){
+    var right = r.def
+      ? '<span class="lock" title="默认规则不可删除">🔒</span>'
+      : '<span class="del" data-dr="' + i + '" title="删除规则">🗑</span>';
+    return '<div class="ri' + (i === R.cur ? ' on' : '') + '" data-rsel="' + i + '">'
+      + '<span class="nm">' + esc(r.name) + '</span>'
+      + '<span class="tag' + (r.def ? ' def' : '') + '">' + (r.def ? '默认' : '自定义') + '</span>'
+      + right + '</div>';
+  }).join('');
+  renderConds();
+}
+
+function renderConds(){
+  var r = R.rules[R.cur];
+  if (!r) return;
+  document.getElementById('rTitle').innerHTML = r.def
+    ? '规则条件　<b style="font-weight:600">' + esc(r.name) + '</b>'
+    : '规则条件　<input id="rName" value="' + esc(r.name) + '" maxlength="12">';
+  document.getElementById('rConds').innerHTML = r.conds.map(function (c, j){
+    return '<div class="cond">'
+      + '<div class="chd"><b>条件' + (j + 1) + '</b><div class="sp"></div>'
+      + '<a class="lnk danger" data-dc="' + j + '">删除</a></div>'
+      + '<div class="cbody">'
+      + '<label>Tag</label><select data-cf="' + j + '">' + fieldOpts(c.field) + '</select>'
+      + '<label>对比条件</label><select data-co="' + j + '">' + opOpts(c.op) + '</select>'
+      + '<label>值（多个英文逗号分割）</label><input data-cv="' + j + '" value="' + esc(c.val) + '" placeholder="如：DR,CR,MG">'
+      + '<label>备注</label><input data-cn="' + j + '" value="' + esc(c.note || '') + '" placeholder="选填">'
+      + '</div></div>';
+  }).join('');
+  if (r.def){
+    [].forEach.call(document.querySelectorAll('#rConds select'), function (s){ s.disabled = true; });
+    [].forEach.call(document.querySelectorAll('#rConds input'), function (s){ s.disabled = true; });
+    [].forEach.call(document.querySelectorAll('#rConds .lnk'), function (a){ a.style.display = 'none'; });
+  }
+}
+
+function openRules(rowId){
+  var row = ROWS.filter(function (x){ return x.id === rowId; })[0];
+  R = { rowId: rowId, rules: clone(row.rules), cur: 0 };
+  document.getElementById('rSub').textContent = row.vendor + ' · ' + row.tool;
+  renderRules();
+  document.getElementById('mkRule').classList.remove('hidden');
+}
+function closeRules(){ document.getElementById('mkRule').classList.add('hidden'); }
+
+function addRule(){
+  R.rules.push({ id: 'r_new_' + R.rules.length + '_' + Date.now(), name: '新规则' + (R.rules.length + 1), def: false,
+                 conds: [{ field: 'modality', op: 'contain', val: '', note: '' }] });
+  R.cur = R.rules.length - 1;
+  renderRules();
+}
+function delRule(i){
+  var r = R.rules[i];
+  if (!r) return;
+  if (r.def){ toast('默认规则不可删除'); return; }
+  R.rules.splice(i, 1);
+  if (R.cur >= R.rules.length) R.cur = R.rules.length - 1;
+  if (R.cur < 0) R.cur = 0;
+  renderRules();
+  toast('已删除规则「' + r.name + '」');
+}
+function addCond(){
+  var r = R.rules[R.cur];
+  if (!r || r.def){ toast('默认规则不可编辑'); return; }
+  r.conds.push({ field: 'modality', op: 'contain', val: '', note: '' });
+  renderConds();
+}
+function saveRules(){
+  var bad = null;
+  R.rules.forEach(function (r){
+    if (r.def) return;
+    r.conds.forEach(function (c, j){
+      if (!String(c.val || '').trim()) bad = r.name + ' 的条件' + (j + 1);
+    });
+  });
+  if (bad){ toast('请填写「' + bad + '」的值'); return; }
+  var row = ROWS.filter(function (x){ return x.id === R.rowId; })[0];
+  row.rules = clone(R.rules);
+  closeRules(); render();
+  toast('数据要求已保存，共 ' + row.rules.length + ' 条规则');
+}
+
+/* ---------- 绑定 ---------- */
+(function init(){
+  VENDORS.forEach(function (v){ document.getElementById('fVendor').insertAdjacentHTML('beforeend', '<option>' + esc(v) + '</option>'); });
+  PARTS.forEach(function (v){ document.getElementById('fPart').insertAdjacentHTML('beforeend', '<option>' + esc(v) + '</option>'); });
+
+  document.getElementById('btnQuery').onclick = function (){
+    S.vendor = document.getElementById('fVendor').value;
+    S.mod = document.getElementById('fMod').value;
+    S.part = document.getElementById('fPart').value;
+    S.name = document.getElementById('fName').value.trim();
+    S.page = 1; render();
+  };
+  document.getElementById('btnReset').onclick = function (){
+    ['fVendor','fMod','fPart','fName'].forEach(function (id){ document.getElementById(id).value = ''; });
+    S.vendor = S.mod = S.part = S.name = ''; S.page = 1; render();
+  };
+  document.getElementById('btnRefresh').onclick = function (){ render(); toast('已刷新'); };
+  document.getElementById('pg').onclick = function (e){
+    var p = e.target.getAttribute && e.target.getAttribute('data-p');
+    if (p){ S.page = +p; render(); }
+  };
+
+  document.getElementById('tb').onclick = function (e){
+    var t = e.target;
+    var sw = t.getAttribute && t.getAttribute('data-sw');
+    if (sw){
+      var r = ROWS.filter(function (x){ return x.id === sw; })[0];
+      r.on = !r.on; render();
+      toast('已' + (r.on ? '启用' : '停用') + '「' + r.tool + '」');
+      return;
+    }
+    var ru = t.getAttribute && t.getAttribute('data-rule');
+    if (ru){ openRules(ru); return; }
+    var ed = t.getAttribute && t.getAttribute('data-edit');
+    if (ed){ toast('编辑工具（示意）'); return; }
+    var dl = t.getAttribute && t.getAttribute('data-del');
+    if (dl){
+      var row = ROWS.filter(function (x){ return x.id === dl; })[0];
+      toast('已删除「' + row.tool + '」（示意）');
+    }
+  };
+
+  document.getElementById('rList').onclick = function (e){
+    var t = e.target;
+    var dr = t.getAttribute && t.getAttribute('data-dr');
+    if (dr){ e.stopPropagation(); delRule(+dr); return; }
+    var sel = t.closest ? t.closest('[data-rsel]') : null;
+    if (sel){ R.cur = +sel.getAttribute('data-rsel'); renderRules(); }
+  };
+  document.getElementById('rConds').onclick = function (e){
+    var d = e.target.getAttribute && e.target.getAttribute('data-dc');
+    if (!d) return;
+    var r = R.rules[R.cur];
+    if (r.conds.length <= 1){ toast('至少保留 1 个条件'); return; }
+    r.conds.splice(+d, 1); renderConds();
+  };
+  document.getElementById('mkRule').onchange = function (e){
+    var t = e.target, r = R.rules[R.cur], j;
+    if ((j = t.getAttribute('data-cf')) !== null) r.conds[+j].field = t.value;
+    else if ((j = t.getAttribute('data-co')) !== null) r.conds[+j].op = t.value;
+  };
+  document.getElementById('mkRule').oninput = function (e){
+    var t = e.target, r = R.rules[R.cur], j;
+    if ((j = t.getAttribute('data-cv')) !== null) r.conds[+j].val = t.value;
+    else if ((j = t.getAttribute('data-cn')) !== null) r.conds[+j].note = t.value;
+    else if (t.id === 'rName') r.name = t.value;
+  };
+  document.getElementById('btnAddRule').onclick = addRule;
+  document.getElementById('btnAddCond').onclick = addCond;
+  document.getElementById('btnRuleOk').onclick = saveRules;
+  [].forEach.call(document.querySelectorAll('[data-rx]'), function (x){ x.onclick = closeRules; });
+  document.getElementById('mkRule').onclick = function (e){ if (e.target === this) closeRules(); };
+
+  render();
+})();
+</script>
+</body>
+</html>
+</template>
 
 <script>
 var CACHE = {};
 function pageHtml(key){
   if (CACHE[key]) return CACHE[key];
-  var tpl = { task:'tplTask', monitor:'tplMonitor', batch:'tplBatch' }[key];
+  var tpl = { task:'tplTask', monitor:'tplMonitor', batch:'tplBatch', shelf:'tplShelf' }[key];
   var html = document.getElementById(tpl).innerHTML;
   html = html.replace(/<\/html>/i, '') + '<style>.nav{display:none!important}</style>';
   CACHE[key] = html;
   return html;
 }
 
-function showPage(key, name){
+function showPage(key, name, group){
   var f = document.getElementById('frame');
   f.srcdoc = pageHtml(key);
-  document.getElementById('crumb').innerHTML = '运维管理 / <b>' + name + '</b>';
+  document.getElementById('crumb').innerHTML = (group || '运维管理') + ' / <b>' + name + '</b>';
 }
 
 (function(){
-  var side = document.getElementById('side');
-  document.getElementById('miOps').onclick = function (){
-    this.classList.toggle('open');
-    document.getElementById('subOps').classList.toggle('hide');
-  };
-  [].forEach.call(side.querySelectorAll('.sub .mi'), function (m){
+  var GROUPS = [['miOps','subOps'], ['miAi','subAi']];
+  GROUPS.forEach(function (g){
+    document.getElementById(g[0]).onclick = function (){
+      this.classList.toggle('open');
+      document.getElementById(g[1]).classList.toggle('hide');
+    };
+  });
+  [].forEach.call(document.querySelectorAll('.sub .mi'), function (m){
     m.onclick = function (){
-      [].forEach.call(side.querySelectorAll('.sub .mi'), function (x){ x.classList.remove('on'); });
+      [].forEach.call(document.querySelectorAll('.sub .mi'), function (x){ x.classList.remove('on'); });
+      [].forEach.call(document.querySelectorAll('#side > .mi'), function (x){ x.classList.remove('on'); });
       m.classList.add('on');
-      document.getElementById('miOps').classList.add('open');
-      document.getElementById('subOps').classList.remove('hide');
+      var sub = m.parentNode;
+      var g = GROUPS.filter(function (x){ return x[1] === sub.id; })[0];
+      if (g){
+        document.getElementById(g[0]).classList.add('on', 'open');
+        sub.classList.remove('hide');
+      }
       var v = m.getAttribute('data-v');
       if (v === 'task') showPage('task', '任务管理');
       else if (v === 'batch') showPage('batch', '数据补发');
+      else if (v === 'shelf') showPage('shelf', '上架中心', 'AI工具管理');
       else showPage('monitor', '数据监控');
     };
   });
