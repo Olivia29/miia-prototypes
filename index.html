@@ -342,14 +342,8 @@ td.nw{white-space:nowrap}
         <div data-ai="match">重新匹配</div>
       </div>
     </div>
-    <button class="btn" id="btnBatchUpd" disabled>更新状态</button>
     <button class="btn" id="btnRefresh">刷新</button>
     <button class="btn" id="btnResetAll">重置</button>
-  </div>
-
-  <div class="tabs">
-    <div class="on" data-tab="all">计算数据</div>
-    <div data-tab="fail">过滤数据</div>
   </div>
 
   <div class="fbar">
@@ -569,7 +563,6 @@ var S = { tab:'all', tool:'', state:'', item:'', uid:'', reqid:'',
 function filtered(){
   var f = function (v, s){ return !s || String(v).toUpperCase().indexOf(String(s).toUpperCase()) >= 0; };
   return TROWS.filter(function (r){
-    if (S.tab === 'fail' && r.state === '计算成功') return false;
     if (S.tool && r.tool !== S.tool) return false;
     if (S.state && r.state !== S.state) return false;
     if (!f(r.item, S.item) || !f(r.uid, S.uid) || !f(r.reqid, S.reqid)) return false;
@@ -649,7 +642,6 @@ function render(){
     ck.checked = pageRows.length > 0 && pageRows.every(function (r){ return S.sel[r.id]; });
     ck.indeterminate = pageRows.some(function (r){ return S.sel[r.id]; }) && !ck.checked;
   }
-  document.getElementById('btnBatchUpd').disabled = selN === 0;
 }
 
 /* ---------- 更新状态 ---------- */
@@ -885,13 +877,6 @@ function cloudConfirm(){
     .map(function (c){ return '<label><input type="checkbox" data-col="' + c.k + '"' + (S.hide[c.k] ? '' : ' checked') + '>' + esc(c.t) + '</label>'; })
     .join('');
 
-  [].forEach.call(document.querySelectorAll('.tabs div'), function (d){
-    d.onclick = function (){
-      [].forEach.call(document.querySelectorAll('.tabs div'), function (x){ x.classList.remove('on'); });
-      d.classList.add('on'); S.tab = d.getAttribute('data-tab'); S.page = 1; S.sel = {}; render();
-    };
-  });
-
   var apply = function (){ S.page = 1; S.sel = {}; render(); };
   document.getElementById('fTool').onchange = function (){ S.tool = this.value; apply(); };
   document.getElementById('fState').onchange = function (){ S.state = this.value; apply(); };
@@ -952,9 +937,6 @@ function cloudConfirm(){
     S.tool = S.state = S.item = S.uid = S.reqid = '';
     S.chkFrom = S.chkTo = S.reqFrom = S.reqTo = S.calcFrom = S.calcTo = '';
     S.page = 1; S.sel = {}; render();
-  };
-  document.getElementById('btnBatchUpd').onclick = function (){
-    openUpd(Object.keys(S.sel).filter(function (k){ return S.sel[k]; }));
   };
 
   document.getElementById('tb').onclick = function (e){
