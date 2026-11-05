@@ -328,6 +328,11 @@ td.nw{white-space:nowrap}
 .ctw .empty2{padding:40px 0;text-align:center;color:#909399;font-size:12.5px}
 .cpager{display:flex;align-items:center;gap:10px;padding:9px 18px;flex:0 0 auto}
 .cinfo{font-size:12.5px;color:#606266}
+.cinfo b{color:#303133}
+.cst{margin-left:12px;padding-left:11px;border-left:1px solid #EBEEF5}
+.cst.ok{color:#52C41A}
+.cst.wait{color:#8C8C8C}
+.cst.bad{color:#FF4D4F}
 .cpages{display:flex;gap:6px;margin-left:auto}
 .cpages button{min-width:26px;height:26px;border:1px solid #DCDFE6;background:#fff;border-radius:4px;
   color:#606266;font-size:12.5px;cursor:pointer}
@@ -463,6 +468,9 @@ td.nw{white-space:nowrap}
       <div class="cf"><label>患者号</label><input id="cfPat" placeholder="请输入"></div>
       <div class="cf"><label>检查号</label><input id="cfStudy" placeholder="请输入"></div>
       <div class="cf"><label>UID</label><input id="cfUid" placeholder="请输入"></div>
+      <div class="cf"><label>发起状态</label>
+        <select id="cfStatus"><option value="">请选择</option><option>未发起</option><option>已发起</option><option>发起失败</option></select>
+      </div>
       <div class="cf w2"><label>检查时间</label>
         <div class="rng"><input type="datetime-local" step="1" id="cfFrom"><span>→</span>
           <input type="datetime-local" step="1" id="cfTo"></div>
@@ -482,7 +490,7 @@ td.nw{white-space:nowrap}
         <thead><tr>
           <th class="cc"><input type="checkbox" id="ckPage"></th>
           <th>机构名称</th><th>设备</th><th>姓名</th><th>患者号</th><th>检查号</th>
-          <th>检查时间</th><th>上传时间</th><th>UID</th><th>操作</th>
+          <th>检查时间</th><th>上传时间</th><th>UID</th><th>发起状态</th><th>操作</th>
         </tr></thead>
         <tbody id="cloudTb"></tbody>
       </table>
@@ -498,6 +506,7 @@ td.nw{white-space:nowrap}
     <div class="cdf">
       <span class="csel" id="cloudSel">已选 0 条</span>
       <span class="cerr" id="cloudErr"></span>
+      <button class="cbtn" id="btnCloudSend" disabled>发起所选</button>
       <button class="cbtn" data-cx>关闭</button>
       <button class="cbtn pri" id="btnCloudOk">确认</button>
     </div>
@@ -832,13 +841,15 @@ var CROWS = (function(){
       pat: '00005' + (22391 + i * 3),
       study: 'DX01' + (34594 + i),
       time: fstamp(t), utime: fstamp(u),
-      uid: '1.2.840.40823.1.1.1.' + (100000 + i * 7) + '.' + (i % 13)
+      uid: '1.2.840.40823.1.1.1.' + (100000 + i * 7) + '.' + (i % 13),
+      st: (i % 13 === 0) ? '发起失败' : (i % 3 === 0 ? '未发起' : '已发起'),
+      stime: (i % 3 === 0) ? '' : fstamp(new Date(t.getTime() + 7200000))
     });
   }
   return out;
 })();
 
-var CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
+var CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'', status:'',
            from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
 
 function clFiltered(){
@@ -851,6 +862,7 @@ function clFiltered(){
     if (CL.to   && r.time > CL.to)   return false;
     if (CL.ufrom && r.utime < CL.ufrom) return false;
     if (CL.uto   && r.utime > CL.uto)   return false;
+    if (CL.status && r.st !== CL.status) return false;
     return true;
   });
 }
@@ -882,10 +894,14 @@ function clRender(){
 
   var tb = document.getElementById('cloudTb');
   if (!pageRows.length){
-    tb.innerHTML = '<tr><td colspan="10"><div class="empty2">没有符合条件的数据</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="11"><div class="empty2">没有符合条件的数据</div></td></tr>';
   } else {
     tb.innerHTML = pageRows.map(function (r){
       var on = !!CL.sel[r.id];
+      var sc = r.st === '已发起' ? '#52C41A' : (r.st === '发起失败' ? '#FF4D4F' : '#8C8C8C');
+      var acts = '<a class="lnk2" data-clv="' + r.id + '">阅片</a>'
+               + '<a class="lnk2" data-cld="' + r.id + '">详情</a>'
+               + (r.st === '已发起' ? '' : '<a class="lnk2" data-csend="' + r.id + '">发起</a>');
       return '<tr><td class="cc"><input type="checkbox" data-crow="' + r.id + '"' + (on ? ' checked' : '') + '></td>'
         + '<td class="el" title="' + esc(r.org) + '">' + esc(r.org) + '</td>'
         + '<td>' + esc(r.dev) + '</td>'
@@ -893,12 +909,28 @@ function clRender(){
         + '<td>' + esc(r.pat) + '</td><td>' + esc(r.study) + '</td>'
         + '<td>' + esc(r.time) + '</td><td>' + esc(r.utime) + '</td>'
         + '<td class="el" title="' + esc(r.uid) + '">' + esc(r.uid) + '</td>'
-        + '<td><a class="lnk2" data-clv="' + r.id + '">阅片</a><a class="lnk2" data-cld="' + r.id + '">详情</a></td></tr>';
+        + '<td title="' + (r.stime ? '发起时间：' + esc(r.stime) : '尚未发起') + '">'
+        +   '<span class="dot"><i style="background:' + sc + '"></i>' + esc(r.st) + '</span></td>'
+        + '<td>' + acts + '</td></tr>';
     }).join('');
   }
   var selN = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; }).length;
   document.getElementById('cloudSel').textContent = '已选 ' + selN + ' 条';
-  document.getElementById('cInfo').textContent = '共 ' + rows.length + ' 条';
+  var nSent = rows.filter(function (r){ return r.st === '已发起'; }).length;
+  var nWait = rows.filter(function (r){ return r.st === '未发起'; }).length;
+  var nBad  = rows.filter(function (r){ return r.st === '发起失败'; }).length;
+  document.getElementById('cInfo').innerHTML = '共 <b>' + rows.length + '</b> 条'
+    + '<span class="cst ok">已发起 ' + nSent + '</span>'
+    + '<span class="cst wait">未发起 ' + nWait + '</span>'
+    + (nBad ? '<span class="cst bad">发起失败 ' + nBad + '</span>' : '');
+  var sendable = Object.keys(CL.sel).filter(function (k){
+    if (!CL.sel[k]) return false;
+    var r = CROWS.filter(function (x){ return x.id === k; })[0];
+    return r && r.st !== '已发起';
+  }).length;
+  var bs = document.getElementById('btnCloudSend');
+  bs.disabled = sendable === 0;
+  bs.textContent = sendable ? ('发起所选(' + sendable + ')') : '发起所选';
 
   var p = '<button data-cp="' + (CL.page - 1) + '"' + (CL.page <= 1 ? ' disabled' : '') + '>‹</button>';
   var nums = [];
@@ -917,10 +949,19 @@ function clRender(){
   ck.indeterminate = pageRows.some(function (r){ return CL.sel[r.id]; }) && !ck.checked;
 }
 
+function sendRows(ids){
+  var n = 0, ts = fstamp(new Date());
+  ids.forEach(function (id){
+    var r = CROWS.filter(function (x){ return x.id === id; })[0];
+    if (!r || r.st === '已发起') return;
+    r.st = '已发起'; r.stime = ts; n++;
+  });
+  return n;
+}
 function openCloud(){
-  CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'',
+  CL = { orgs:[], q:'', dev:'', name:'', pat:'', study:'', uid:'', status:'',
          from:'', to:'', ufrom:'', uto:'', page:1, size:10, sel:{} };
-  ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo','msQ'].forEach(function (id){
+  ['cfDev','cfName','cfPat','cfStudy','cfUid','cfStatus','cfFrom','cfTo','cuFrom','cuTo','msQ'].forEach(function (id){
     document.getElementById(id).value = '';
   });
   document.getElementById('cSize').value = '10';
@@ -1099,6 +1140,7 @@ function cloudConfirm(){
   };
   document.getElementById('cfQuery').onclick = function (){
     CL.dev = document.getElementById('cfDev').value;
+    CL.status = document.getElementById('cfStatus').value;
     CL.name = document.getElementById('cfName').value.trim();
     CL.pat = document.getElementById('cfPat').value.trim();
     CL.study = document.getElementById('cfStudy').value.trim();
@@ -1110,10 +1152,10 @@ function cloudConfirm(){
     CL.page = 1; CL.sel = {}; clRender();
   };
   document.getElementById('cfReset').onclick = function (){
-    ['cfDev','cfName','cfPat','cfStudy','cfUid','cfFrom','cfTo','cuFrom','cuTo'].forEach(function (id){
+    ['cfDev','cfName','cfPat','cfStudy','cfUid','cfStatus','cfFrom','cfTo','cuFrom','cuTo'].forEach(function (id){
       document.getElementById(id).value = '';
     });
-    CL.dev = CL.name = CL.pat = CL.study = CL.uid = '';
+    CL.dev = CL.name = CL.pat = CL.study = CL.uid = ''; CL.status = '';
     CL.from = CL.to = CL.ufrom = CL.uto = '';
     CL.page = 1; CL.sel = {}; CL.q = '';
     document.getElementById('msQ').value = '';
@@ -1123,11 +1165,25 @@ function cloudConfirm(){
     var t = e.target;
     var ck = t.getAttribute && t.getAttribute('data-crow');
     if (ck){ CL.sel[ck] = t.checked; clRender(); return; }
+    var sd = t.getAttribute && t.getAttribute('data-csend');
+    if (sd){
+      var n = sendRows([sd]);
+      clRender();
+      toast('已发起 ' + n + ' 条数据（示意）');
+      return;
+    }
     var v = t.getAttribute && (t.getAttribute('data-clv') || t.getAttribute('data-cld'));
     if (v){
       var r = CROWS.filter(function (x){ return x.id === v; })[0];
       toast((t.getAttribute('data-clv') ? '打开阅片：' : '查看详情：') + r.study + '（示意）');
     }
+  };
+  document.getElementById('btnCloudSend').onclick = function (){
+    var ids = Object.keys(CL.sel).filter(function (k){ return CL.sel[k]; });
+    var n = sendRows(ids);
+    CL.sel = {};
+    clRender();
+    toast(n ? ('已发起 ' + n + ' 条数据（示意）') : '所选数据均已发起');
   };
   document.getElementById('ckPage').onclick = function (){
     var rows = clFiltered().slice((CL.page - 1) * CL.size, CL.page * CL.size);
