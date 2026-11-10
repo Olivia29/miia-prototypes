@@ -246,16 +246,11 @@ tbody td.warn{color:var(--warn);font-weight:700}
 tbody td.danger{color:var(--danger);font-weight:700}
 tbody td.succ{font-weight:600}
 tbody td.dim{color:#6B7688}
-.ell{display:block;max-width:236px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ell{display:block;max-width:268px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tool{display:inline-flex;align-items:center;gap:7px;max-width:100%}
 .tool i{
   width:6px;height:6px;border-radius:50%;flex:0 0 6px;
   background:linear-gradient(135deg,var(--brand),#7FB2FF);box-shadow:0 0 0 3px rgba(47,91,255,.10);
-}
-.orgcell{display:inline-flex;align-items:center;gap:8px;max-width:100%}
-.orgcell .ab{
-  width:22px;height:22px;border-radius:7px;flex:0 0 22px;display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;color:#4E6BB8;background:#EEF2FC;border:1px solid #E1E8F8;
 }
 .empty{
   min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
@@ -552,10 +547,6 @@ function currentRows(){
     return true;
   });
 }
-var ABBR = {'湘潭市中心医院':'中心','湘潭市第一人民医院':'一院','湘潭市妇幼保健院':'妇幼',
-  '湘潭县人民医院':'县院','湘乡市人民医院':'湘乡','韶山市人民医院':'韶山',
-  '湘潭市中医医院':'中医','湘潭市第二人民医院':'二院'};
-function abbr(name){ return ABBR[name] || name.slice(0, 2); }
 function render(){
   var rows = currentRows();
   var maxP = Math.max(1, Math.ceil(rows.length / S.size));
@@ -572,8 +563,7 @@ function render(){
   } else {
     tb.innerHTML = show.map(function (r){
       return '<tr>'
-        + '<td class="l"><span class="orgcell"><span class="ab">' + esc(abbr(r.org)) + '</span>'
-        +   '<span class="ell" title="' + esc(r.org) + '">' + esc(r.org) + '</span></span></td>'
+        + '<td class="l"><span class="ell" title="' + esc(r.org) + '">' + esc(r.org) + '</span></td>'
         + '<td class="l"><span class="tool"><i></i><span class="ell" title="' + esc(r.tool) + '">' + esc(r.tool) + '</span></span></td>'
         + '<td class="num">' + fmt(r.recv) + '</td>'
         + '<td class="num">' + fmt(r.matched) + '</td>'
