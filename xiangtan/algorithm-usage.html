@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>算法使用统计 · 湘潭项目</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;font-size:13px;color:#333;
+  background:#F0F2F5;display:flex;flex-direction:column;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+a{cursor:pointer}
+
+/* 顶栏 */
+.top{height:52px;flex:0 0 52px;background:#fff;display:flex;align-items:center;gap:22px;
+  padding:0 18px;border-bottom:1px solid #E6E8EB;box-shadow:0 1px 3px rgba(0,0,0,.04);z-index:20}
+.brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;color:#1F2A3C;white-space:nowrap}
+.logo{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#2F6BFF,#00B0F0);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+.tnav{display:flex;align-items:center;gap:4px;height:100%}
+.tnav a{position:relative;height:100%;display:flex;align-items:center;padding:0 14px;font-size:13.5px;color:#4A5568}
+.tnav a:hover{color:#2F6BFF}
+.tnav a.on{color:#2F6BFF;font-weight:600}
+.tnav a.on::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:2px;background:#2F6BFF;border-radius:2px}
+.tright{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12.5px;color:#4A5568}
+.tright .org{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.avatar{width:26px;height:26px;border-radius:50%;background:#E8F0FF;color:#2F6BFF;font-size:11px;
+  display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* 主体 */
+.main{flex:1;min-height:0;display:flex}
+.side{width:196px;flex:0 0 196px;background:#1B2430;color:#A9B4C4;padding-top:8px;overflow-y:auto}
+.grp{margin-bottom:6px}
+.gt{display:flex;align-items:center;gap:8px;padding:11px 16px;font-size:13.5px;color:#DDE4EE;font-weight:600}
+.gt .ic{width:14px;height:14px;border-radius:3px;background:#2F6BFF;opacity:.85}
+.si{position:relative;display:block;padding:9px 16px 9px 38px;font-size:13px;color:#95A2B5;text-decoration:none}
+.si:hover{background:#232E3D;color:#DDE4EE}
+.si.on{background:#2A3B57;color:#fff}
+.si.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#2F6BFF}
+
+.view{flex:1;min-width:0;display:flex;flex-direction:column;padding:12px 16px 14px;overflow:hidden}
+.crumb{font-size:12.5px;color:#8C96A6;margin-bottom:10px;flex:0 0 auto}
+.crumb b{color:#333;font-weight:600}
+
+/* 筛选卡 */
+.fcard{background:#fff;border-radius:4px;padding:12px 14px;display:flex;align-items:center;gap:14px;
+  flex-wrap:wrap;margin-bottom:12px;flex:0 0 auto;border:1px solid #EBEEF5}
+.seg{display:flex;border:1px solid #D9DEE7;border-radius:4px;overflow:hidden;height:32px}
+.seg button{height:100%;padding:0 14px;border:none;background:#fff;font-size:12.5px;color:#4A5568;
+  border-right:1px solid #D9DEE7}
+.seg button:last-child{border-right:none}
+.seg button:hover{color:#2F6BFF}
+.seg button.on{background:#EAF2FF;color:#2F6BFF;font-weight:600}
+.dates{display:none;align-items:center;gap:6px}
+.dates.on{display:flex}
+.dates input{height:32px;border:1px solid #D9DEE7;border-radius:4px;padding:0 8px;font-size:12.5px;
+  color:#333;outline:none;font-family:inherit;width:142px}
+.dates input:focus{border-color:#2F6BFF}
+.dates .to{color:#98A2B3}
+.fcard .sp{flex:1}
+
+/* 多选 */
+.ms{position:relative}
+.msbtn{height:32px;min-width:190px;max-width:250px;border:1px solid #D9DEE7;border-radius:4px;background:#fff;
+  padding:0 30px 0 10px;font-size:12.5px;color:#333;text-align:left;position:relative;
+  display:flex;align-items:center;gap:6px}
+.msbtn:hover{border-color:#2F6BFF}
+.msbtn.open{border-color:#2F6BFF;box-shadow:0 0 0 2px rgba(47,107,255,.12)}
+.msbtn .lb{color:#98A2B3;flex:0 0 auto}
+.msbtn .vv{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#333}
+.msbtn .cnt{flex:0 0 auto;font-size:11px;padding:1px 6px;border-radius:9px;background:#EAF2FF;color:#2F6BFF}
+.msbtn .car{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#98A2B3;font-size:10px}
+.panel{position:absolute;z-index:40;top:36px;left:0;width:290px;background:#fff;border:1px solid #E1E6EF;
+  border-radius:5px;box-shadow:0 10px 26px rgba(20,40,80,.16);display:none;overflow:hidden}
+.panel.on{display:block}
+.ps{padding:8px}
+.ps input{width:100%;height:30px;border:1px solid #E1E6EF;border-radius:4px;padding:0 8px;font-size:12.5px;
+  outline:none;font-family:inherit}
+.ps input:focus{border-color:#2F6BFF}
+.pl{max-height:246px;overflow-y:auto;padding:2px 0}
+.pi{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12.5px;color:#333;cursor:pointer}
+.pi:hover{background:#F5F9FF}
+.pi input{width:14px;height:14px;accent-color:#2F6BFF;cursor:pointer;flex:0 0 14px}
+.pi .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid #EEF1F6;background:#FAFBFD}
+.pf .sp{flex:1}
+.pf button{height:26px;padding:0 10px;border:1px solid #D9DEE7;background:#fff;border-radius:4px;font-size:12px;color:#4A5568}
+.pf button:hover{border-color:#2F6BFF;color:#2F6BFF}
+.pf .all{cursor:pointer;font-size:12px;color:#2F6BFF;display:flex;align-items:center;gap:6px}
+.pf .all input{accent-color:#2F6BFF}
+
+/* 表格卡 */
+.tcard{background:#fff;border-radius:4px;flex:1;min-height:0;display:flex;flex-direction:column;
+  border:1px solid #EBEEF5;overflow:hidden}
+.thd{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #F0F2F5;flex:0 0 auto}
+.thd h2{font-size:14.5px;font-weight:700;color:#1F2A3C}
+.thd .cnt{font-size:12.5px;color:#8C96A6}
+.thd .sp{flex:1}
+.thd .tag{font-size:11.5px;padding:2px 8px;border-radius:9px;background:#EAF2FF;color:#2F6BFF}
+.tw{flex:1;min-height:0;overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+thead th{position:sticky;top:0;z-index:2;background:#F5F7FA;color:#333;font-weight:600;text-align:center;
+  padding:10px 10px;border-bottom:1px solid #EBEEF5;white-space:nowrap}
+thead th.l{text-align:left}
+tbody td{padding:9px 10px;border-bottom:1px solid #F2F4F7;color:#333;white-space:nowrap;text-align:center}
+tbody td.l{text-align:left}
+tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover td{background:#F7FAFF}
+.ell{display:block;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tool{display:inline-flex;align-items:center;gap:6px}
+.tool i{width:6px;height:6px;border-radius:50%;background:#2F6BFF;flex:0 0 6px}
+.empty{height:100%;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;color:#9AA4B2;font-size:13px}
+.empty .ill{width:44px;height:44px;border-radius:50%;background:#F2F5FA;display:flex;align-items:center;
+  justify-content:center;color:#C4CDD9;font-size:20px}
+.pg{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid #F0F2F5;
+  font-size:12.5px;color:#8C96A6}
+.pg .sp{flex:1}
+.pg .p{min-width:28px;height:28px;border:1px solid #D9DEE7;background:#fff;border-radius:4px;color:#4A5568;font-size:12.5px}
+.pg .p.on{background:#2F6BFF;border-color:#2F6BFF;color:#fff}
+.pg .p[disabled]{color:#C8D0DC;cursor:not-allowed}
+.pg .gap{color:#C8D0DC}
+.pg select{height:28px;border:1px solid #D9DEE7;border-radius:4px;padding:0 6px;font-size:12.5px;
+  color:#4A5568;background:#fff;outline:none;font-family:inherit}
+.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%) translateY(-8px);background:#333;color:#fff;
+  padding:8px 16px;border-radius:4px;font-size:12.5px;opacity:0;pointer-events:none;transition:.22s;z-index:90}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><span class="logo"> xt </span>湘潭项目</div>
+  <nav class="tnav">
+    <a>实施</a><a>业务</a><a>数据</a><a class="on">统计</a><a>监控</a><a>应用</a><a>配置</a>
+  </nav>
+  <div class="tright">
+    <span class="org">湘潭市中心医院</span>
+    <span class="avatar">湘</span>
+  </div>
+</header>
+
+<div class="main">
+  <aside class="side">
+    <div class="grp">
+      <div class="gt"><span class="ic"></span>AI诊断统计</div>
+      <a class="si">使用统计</a>
+      <a class="si on" id="sideActive">算法使用统计</a>
+    </div>
+  </aside>
+
+  <section class="view">
+    <div class="crumb">AI诊断统计 / <b id="crumbCur">算法使用统计</b></div>
+
+    <div class="fcard">
+      <div class="seg" id="segTime">
+        <button data-d="1">本日</button>
+        <button data-d="7" class="on">近7天</button>
+        <button data-d="30">近30天</button>
+        <button data-d="0">自定义</button>
+      </div>
+      <div class="dates" id="dateBox">
+        <input type="date" id="dFrom"><span class="to">至</span><input type="date" id="dTo">
+      </div>
+      <div class="ms" id="msOrg"></div>
+      <div class="ms" id="msTool"></div>
+      <div class="sp"></div>
+    </div>
+
+    <div class="tcard">
+      <div class="thd">
+        <h2>算法使用统计</h2>
+        <span class="cnt" id="cntTxt">共 0 条</span>
+        <span class="sp"></span>
+        <span class="tag" id="rangeTag">近7天</span>
+      </div>
+      <div class="tw">
+        <table id="tbl">
+          <thead><tr>
+            <th class="l">机构名称</th><th class="l">AI 工具</th>
+            <th>接收数据</th><th>匹配数据</th><th>过滤数据</th>
+            <th>计算中</th><th>计算成功</th><th>计算失败</th>
+            <th>已阅数量</th><th>未阅数量</th>
+          </tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+      <div class="pg" id="pg"></div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- 基础 ---------- */
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function ymd(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(m){
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
+}
+function rnd(seed){
+  return function(){
+    seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+/* ---------- 演示数据 ---------- */
+var ORGS = ['湘潭市中心医院','湘潭市第一人民医院','湘潭市妇幼保健院','湘潭县人民医院',
+            '湘乡市人民医院','韶山市人民医院','湘潭市中医医院','湘潭市第二人民医院'];
+var TOOLS = [
+  { n:'CT颅脑AIR（影禾）', rate:0.10 },
+  { n:'CT胸部AIR（影禾）', rate:0.14 },
+  { n:'肺结节筛查（影禾）', rate:0.18 },
+  { n:'骨折检测', rate:0.26 },
+  { n:'冠脉钙化积分', rate:0.31 },
+  { n:'骨龄评估', rate:0.38 }
+];
+/* 每个 机构×工具 的 7 日基准量；部分组合无数据（用于空态） */
+function baseOf(oi, ti){
+  var r = rnd(1000 + oi * 37 + ti * 11);
+  var v = r();
+  if (ti === 5 && oi >= 3) return 0;          /* 骨龄：仅前 3 家开展 */
+  if (ti === 4 && oi >= 6) return 0;          /* 钙化积分：后 2 家未开展 */
+  if (v < 0.08) return 0;
+  var w = [1.0, 0.86, 0.62, 0.48, 0.42, 0.35, 0.30, 0.26][oi];
+  return Math.round((420 + r() * 1650) * w * (1 - ti * 0.07));
+}
+/* 按统计区间换算（days=1/7/30 或自定义天数） */
+function rowsFor(days){
+  var out = [];
+  for (var oi = 0; oi < ORGS.length; oi++){
+    for (var ti = 0; ti < TOOLS.length; ti++){
+      var b7 = baseOf(oi, ti);
+      if (!b7) continue;
+      var r = rnd(9000 + oi * 131 + ti * 17 + days);
+      var factor = (days / 7) * (days === 7 ? 1 : (0.94 + r() * 0.12));
+      var recv = Math.max(1, Math.round(b7 * factor));
+      var filtRate = TOOLS[ti].rate * (0.85 + r() * 0.35);
+      var filt = Math.round(recv * filtRate);
+      var matched = recv - filt;
+      var failed = Math.round(matched * (0.010 + r() * 0.030));
+      var doing = Math.round(matched * (0.003 + r() * 0.009));
+      if (failed + doing > matched - 1){ failed = Math.max(0, matched - 1 - doing); }
+      var succ = matched - failed - doing;
+      var unread = Math.round(succ * (0.25 + r() * 0.35));
+      var read = succ - unread;
+      out.push({
+        org: ORGS[oi], tool: TOOLS[ti].n,
+        recv: recv, matched: matched, filt: filt,
+        doing: doing, succ: succ, failed: failed,
+        read: read, unread: unread
+      });
+    }
+  }
+  out.sort(function(a, b){ return b.recv - a.recv; });
+  return out;
+}
+
+/* ---------- 状态 ---------- */
+var S = {
+  days: 7,
+  from: ymd(new Date(Date.now() - 6 * 86400000)),
+  to: ymd(new Date()),
+  orgs: [],          /* 空 = 全部 */
+  tools: [],
+  page: 1,
+  size: 10
+};
+
+/* ---------- 多选组件 ---------- */
+function MS(rootId, label, options, getSel, setSel){
+  var root = document.getElementById(rootId);
+  root.innerHTML =
+      '<button class="msbtn" type="button">'
+    +   '<span class="lb">' + esc(label) + '</span>'
+    +   '<span class="vv"></span>'
+    +   '<span class="cnt" hidden></span>'
+    +   '<span class="car">▼</span>'
+    + '</button>'
+    + '<div class="panel">'
+    +   '<div class="ps"><input type="text" placeholder="搜索' + esc(label) + '"></div>'
+    +   '<div class="pl"></div>'
+    +   '<div class="pf"><label class="all"><input type="checkbox">全选</label>'
+    +     '<span class="sp"></span><button class="clr">清空</button></div>'
+    + '</div>';
+
+  var btn = root.querySelector('.msbtn'),
+      panel = root.querySelector('.panel'),
+      search = root.querySelector('.ps input'),
+      list = root.querySelector('.pl'),
+      allBox = root.querySelector('.pf .all input');
+
+  function renderList(){
+    var q = search.value.trim().toLowerCase();
+    var sel = getSel();
+    list.innerHTML = options.filter(function (o){
+      return !q || o.toLowerCase().indexOf(q) >= 0;
+    }).map(function (o){
+      var on = sel.indexOf(o) >= 0;
+      return '<label class="pi"><input type="checkbox" data-v="' + esc(o) + '"' + (on ? ' checked' : '') + '>'
+           + '<span class="nm" title="' + esc(o) + '">' + esc(o) + '</span></label>';
+    }).join('') || '<div class="pi" style="color:#9AA4B2;cursor:default">无匹配项</div>';
+    var visible = options.filter(function (o){ return !q || o.toLowerCase().indexOf(q) >= 0; });
+    var selVisible = visible.filter(function (o){ return sel.indexOf(o) >= 0; });
+    allBox.checked = visible.length > 0 && selVisible.length === visible.length;
+    allBox.indeterminate = selVisible.length > 0 && selVisible.length < visible.length;
+  }
+  function renderBtn(){
+    var sel = getSel();
+    var vv = btn.querySelector('.vv'), cnt = btn.querySelector('.cnt');
+    if (!sel.length){ vv.textContent = '全部'; cnt.hidden = true; }
+    else if (sel.length === 1){ vv.textContent = sel[0]; cnt.hidden = true; }
+    else {
+      vv.textContent = label === '机构' ? '已选 ' + sel.length + ' 家'
+                                        : '已选 ' + sel.length + ' 个';
+      cnt.hidden = false; cnt.textContent = sel.length;
+    }
+  }
+  function sync(){ renderList(); renderBtn(); }
+
+  btn.onclick = function (e){
+    e.stopPropagation();
+    var open = panel.classList.contains('on');
+    [].forEach.call(document.querySelectorAll('.panel'), function (p){ p.classList.remove('on'); });
+    [].forEach.call(document.querySelectorAll('.msbtn'), function (b){ b.classList.remove('open'); });
+    if (!open){ panel.classList.add('on'); btn.classList.add('open'); search.focus(); }
+  };
+  panel.onclick = function (e){ e.stopPropagation(); };
+  list.onchange = function (e){
+    var t = e.target;
+    if (t.tagName !== 'INPUT') return;
+    var v = t.getAttribute('data-v');
+    var sel = getSel().slice();
+    var i = sel.indexOf(v);
+    if (t.checked && i < 0) sel.push(v);
+    if (!t.checked && i >= 0) sel.splice(i, 1);
+    setSel(sel); renderBtn(); refreshAll(); onChange();
+  };
+  function refreshAll(){
+    var boxes = [].slice.call(list.querySelectorAll('input[data-v]'));
+    var checked = boxes.filter(function (b){ return b.checked; });
+    allBox.checked = boxes.length > 0 && checked.length === boxes.length;
+    allBox.indeterminate = checked.length > 0 && checked.length < boxes.length;
+  }
+  allBox.onchange = function (){
+    var q = search.value.trim().toLowerCase();
+    var visible = options.filter(function (o){ return !q || o.toLowerCase().indexOf(q) >= 0; });
+    var sel = getSel().slice();
+    if (allBox.checked){
+      visible.forEach(function (o){ if (sel.indexOf(o) < 0) sel.push(o); });
+    } else {
+      sel = sel.filter(function (o){ return visible.indexOf(o) < 0; });
+    }
+    setSel(sel); sync(); onChange();
+    refreshAll();
+  };
+  search.oninput = renderList;
+  root.querySelector('.clr').onclick = function (e){
+    e.stopPropagation(); setSel([]); search.value = ''; sync(); onChange();
+  };
+  sync();
+  return { sync: sync, close: function (){ panel.classList.remove('on'); btn.classList.remove('open'); } };
+}
+
+var onChange = function (){ S.page = 1; render(); };
+
+/* ---------- 渲染 ---------- */
+function currentRows(){
+  var all = rowsFor(S.days);
+  return all.filter(function (r){
+    if (S.orgs.length && S.orgs.indexOf(r.org) < 0) return false;
+    if (S.tools.length && S.tools.indexOf(r.tool) < 0) return false;
+    return true;
+  });
+}
+function render(){
+  var rows = currentRows();
+  var maxP = Math.max(1, Math.ceil(rows.length / S.size));
+  if (S.page > maxP) S.page = maxP;
+  var show = rows.slice((S.page - 1) * S.size, S.page * S.size);
+
+  document.getElementById('cntTxt').textContent = '共 ' + rows.length + ' 条';
+
+  var tb = document.getElementById('tb');
+  if (!show.length){
+    tb.innerHTML = '<tr><td colspan="10" style="padding:0;border:none">'
+      + '<div class="empty"><div class="ill">◎</div><div>暂无数据</div></div></td></tr>';
+  } else {
+    tb.innerHTML = show.map(function (r){
+      return '<tr>'
+        + '<td class="l"><span class="ell" title="' + esc(r.org) + '">' + esc(r.org) + '</span></td>'
+        + '<td class="l"><span class="tool"><i></i><span class="ell" title="' + esc(r.tool) + '">' + esc(r.tool) + '</span></span></td>'
+        + '<td class="num">' + fmt(r.recv) + '</td>'
+        + '<td class="num">' + fmt(r.matched) + '</td>'
+        + '<td class="num">' + fmt(r.filt) + '</td>'
+        + '<td class="num">' + fmt(r.doing) + '</td>'
+        + '<td class="num">' + fmt(r.succ) + '</td>'
+        + '<td class="num">' + fmt(r.failed) + '</td>'
+        + '<td class="num">' + fmt(r.read) + '</td>'
+        + '<td class="num">' + fmt(r.unread) + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  var p = '<span>共 ' + rows.length + ' 条</span>'
+        + '<select id="pgSize">' + [10, 20, 50].map(function (n){
+            return '<option value="' + n + '"' + (n === S.size ? ' selected' : '') + '>' + n + ' 条/页</option>';
+          }).join('') + '</select>'
+        + '<span class="sp"></span>'
+        + '<button class="p" data-p="' + (S.page - 1) + '"' + (S.page <= 1 ? ' disabled' : '') + '>‹</button>';
+  var nums = [];
+  for (var n = 1; n <= maxP; n++) if (n <= 3 || n === maxP || Math.abs(n - S.page) <= 1) nums.push(n);
+  var last = 0;
+  nums.forEach(function (n){
+    if (last && n - last > 1) p += '<span class="gap">…</span>';
+    p += '<button class="p' + (n === S.page ? ' on' : '') + '" data-p="' + n + '">' + n + '</button>';
+    last = n;
+  });
+  p += '<button class="p" data-p="' + (S.page + 1) + '"' + (S.page >= maxP ? ' disabled' : '') + '>›</button>';
+  document.getElementById('pg').innerHTML = p;
+
+  document.getElementById('pgSize').onchange = function (){
+    S.size = +this.value; S.page = 1; render();
+  };
+  document.getElementById('pg').querySelectorAll('.p').forEach(function (b){
+    b.onclick = function (){
+      var v = +this.getAttribute('data-p');
+      if (v < 1 || v > maxP) return;
+      S.page = v; render();
+    };
+  });
+}
+
+/* ---------- 初始化 ---------- */
+(function init(){
+  var msOrg = MS('msOrg', '机构', ORGS, function (){ return S.orgs; }, function (v){ S.orgs = v; });
+  var msTool = MS('msTool', '算法', TOOLS.map(function (t){ return t.n; }),
+                  function (){ return S.tools; }, function (v){ S.tools = v; });
+
+  document.getElementById('segTime').onclick = function (e){
+    var b = e.target.closest('button');
+    if (!b) return;
+    [].forEach.call(this.querySelectorAll('button'), function (x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    var d = +b.getAttribute('data-d');
+    var box = document.getElementById('dateBox');
+    if (d === 0){
+      box.classList.add('on');
+      document.getElementById('rangeTag').textContent =
+        document.getElementById('dFrom').value + ' 至 ' + document.getElementById('dTo').value;
+      var f = document.getElementById('dFrom').value, t = document.getElementById('dTo').value;
+      if (f && t){
+        var dd = Math.round((new Date(t) - new Date(f)) / 86400000) + 1;
+        if (dd > 0){ S.days = dd; }
+      }
+    } else {
+      box.classList.remove('on');
+      S.days = d;
+      document.getElementById('rangeTag').textContent = b.textContent.trim();
+    }
+    S.page = 1; render();
+  };
+
+  document.getElementById('dFrom').value = S.from;
+  document.getElementById('dTo').value = S.to;
+  ['dFrom','dTo'].forEach(function (id){
+    document.getElementById(id).onchange = function (){
+      var f = document.getElementById('dFrom').value, t = document.getElementById('dTo').value;
+      if (!f || !t) return;
+      if (new Date(f) > new Date(t)){ toast('开始日期不能晚于结束日期'); return; }
+      var dd = Math.round((new Date(t) - new Date(f)) / 86400000) + 1;
+      S.days = dd;
+      document.getElementById('rangeTag').textContent = f + ' 至 ' + t;
+      S.page = 1; render();
+    };
+  });
+
+  document.addEventListener('click', function (){
+    [].forEach.call(document.querySelectorAll('.panel'), function (p){ p.classList.remove('on'); });
+    [].forEach.call(document.querySelectorAll('.msbtn'), function (b){ b.classList.remove('open'); });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
