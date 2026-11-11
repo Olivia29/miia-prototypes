@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>U703 · 检查更新</title>
+<style>
+:root{
+  --brand:#1E5BD6; --brand-2:#3C7BEA; --brand-soft:#EDF3FE;
+  --ink:#1A2433; --ink-2:#4B586B; --muted:#8E9AAA;
+  --line:#E6EAF2; --line-2:#F0F3F9;
+  --bg:#F2F4F8; --card:#fff;
+  --ok:#12A594; --ok-soft:#E9F8F5; --warn:#E8890C; --warn-soft:#FFF4E6;
+  --danger:#E5484D; --danger-soft:#FDECEC;
+  --sd-1:0 1px 2px rgba(16,24,40,.05);
+  --sd-3:0 20px 50px rgba(16,24,40,.18);
+  --sd-menu:0 10px 30px rgba(16,24,40,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;font-size:13px;
+  color:var(--ink);background:var(--bg);display:flex;flex-direction:column;overflow:hidden;
+  -webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+a{cursor:pointer;text-decoration:none}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#D3DAE6;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+
+/* ===== 顶栏 ===== */
+.topbar{height:54px;flex:0 0 54px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#fff;
+  border-bottom:1px solid var(--line);z-index:40;position:relative}
+.logo{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#1E5BD6,#4C8DFF);color:#fff;font-size:12px;font-weight:700;
+  letter-spacing:.5px;box-shadow:0 3px 10px rgba(30,91,214,.30);cursor:pointer}
+.u703{height:30px;display:flex;align-items:center;padding:0 12px;border-radius:8px;background:#F4F6FA;
+  border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.4px}
+.mbtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center;font-size:14px;transition:.15s}
+.mbtn:hover{border-color:#B9CBEF;color:var(--brand);background:#FBFCFF}
+.mbtn.on{background:var(--brand-soft);border-color:#B9CBEF;color:var(--brand)}
+.sbtn{width:30px;height:30px;border-radius:50%;border:none;background:linear-gradient(135deg,#1E5BD6,#4C8DFF);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;
+  box-shadow:0 3px 10px rgba(30,91,214,.28)}
+.tsp{flex:1}
+.tinfo{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-right:6px}
+.uchip{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:20px;border:1px solid var(--line);
+  background:#FBFCFE;font-size:12.5px;color:var(--ink-2)}
+.uchip .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#E8F0FF,#D7E4FF);
+  color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+/* ===== 下拉菜单 ===== */
+.menu{position:absolute;top:50px;left:52px;width:196px;background:#fff;border-radius:10px;
+  box-shadow:var(--sd-menu);border:1px solid var(--line);padding:6px;z-index:60;animation:pop .14s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.mi{position:relative;display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;font-size:13px;
+  color:var(--ink);cursor:pointer;transition:.12s}
+.mi:hover,.mi.hover{background:#F3F7FF;color:var(--brand)}
+.mi .arr{margin-left:auto;color:#B6C0CF;font-size:9px}
+.mi.new::after{content:"新";font-size:10px;font-weight:700;color:#fff;background:var(--danger);
+  padding:0 5px;border-radius:8px;line-height:15px;height:15px}
+.mdiv{height:1px;background:var(--line-2);margin:5px 4px}
+.mfoot{padding:8px 10px 4px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px;
+  font-variant-numeric:tabular-nums}
+
+/* 二级菜单 */
+.submenu{position:absolute;left:186px;top:-6px;width:176px;background:#fff;border-radius:10px;
+  box-shadow:var(--sd-menu);border:1px solid var(--line);padding:6px;display:none;z-index:70}
+.submenu.on{display:block;animation:pop .14s ease-out}
+.smi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;font-size:12.5px;color:var(--ink);
+  cursor:pointer;transition:.12s}
+.smi:hover{background:#F3F7FF;color:var(--brand)}
+.smi .dot{width:5px;height:5px;border-radius:50%;background:#C9D3E2}
+.smi:hover .dot{background:var(--brand)}
+.smi.sep{margin-top:4px;border-top:1px solid var(--line-2);padding-top:10px}
+
+/* ===== 主区 ===== */
+.work{flex:1;min-height:0;display:flex;gap:10px;padding:10px}
+
+/* 患者列表 */
+.pane{background:#fff;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:var(--sd-1)}
+.pat{width:236px;flex:0 0 236px}
+.phd{display:flex;align-items:center;gap:8px;padding:11px 12px;border-bottom:1px solid var(--line-2);font-size:12.5px;
+  font-weight:600;color:var(--ink)}
+.phd .cnt{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--brand);background:var(--brand-soft);
+  padding:1px 8px;border-radius:9px}
+.plist{flex:1;overflow-y:auto}
+.pitem{padding:10px 12px;border-bottom:1px solid var(--line-2);cursor:pointer;transition:.12s}
+.pitem:hover{background:#F6F9FF}
+.pitem.on{background:#EDF3FE;box-shadow:inset 3px 0 0 var(--brand)}
+.pitem .n1{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600}
+.pitem .n2{font-size:11.5px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.pitem .st{width:6px;height:6px;border-radius:50%;flex:0 0 6px}
+.st.w{background:#E8890C}.st.g{background:var(--ok)}.st.d{background:#C9D3E2}
+
+/* 报告编辑 */
+.report{flex:1;min-width:0}
+.rhd{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line-2)}
+.rhd .t{font-size:13px;font-weight:700}
+.rhd .meta{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rhd .sp{flex:1}
+.chip{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--warn-soft);color:#B45309;font-weight:600}
+.chip.ok{background:var(--ok-soft);color:#0E8A7C}
+.rbody{flex:1;overflow-y:auto;padding:14px}
+.sec{margin-bottom:16px}
+.sec .lb{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.sec .lb .tg{font-size:10.5px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:1px 7px;
+  border-radius:9px}
+.ta{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;line-height:2;
+  color:#33405A;background:#FCFDFF;min-height:86px}
+.rfoot{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line-2);background:#FCFDFF}
+
+/* AI 建议 */
+.ai{width:250px;flex:0 0 250px}
+.aibody{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:9px}
+.aicard{border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#FCFDFF}
+.aicard .t{font-size:12px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.aicard .t i{width:5px;height:5px;border-radius:50%;background:var(--brand)}
+.aicard .d{font-size:11.5px;color:var(--ink-2);line-height:1.85}
+
+/* ===== 弹窗（沿用系统更新样式） ===== */
+.mask{position:fixed;inset:0;background:rgba(16,24,40,.42);display:flex;align-items:center;justify-content:center;
+  z-index:80;backdrop-filter:blur(2px)}
+.mask.hidden{display:none}
+.dlg{position:relative;background:#fff;border-radius:14px;box-shadow:var(--sd-3);width:min(660px,92vw);
+  max-height:86vh;display:flex;flex-direction:column;overflow:hidden;animation:pop .18s ease-out}
+.dh{display:flex;align-items:center;gap:10px;padding:15px 18px 11px}
+.dh h3{font-size:15.5px;font-weight:700}
+.dh .ver{font-size:12px;color:var(--danger);background:var(--danger-soft);padding:2px 9px;border-radius:9px;
+  font-weight:600;font-variant-numeric:tabular-nums}
+.dh .sp{flex:1}
+.dh .x{width:26px;height:26px;line-height:24px;text-align:center;border-radius:7px;color:#B4BDCB;font-size:16px}
+.dh .x:hover{background:#F3F5FA;color:var(--ink-2)}
+.dbody{flex:1;min-height:0;overflow-y:auto;padding:0 18px 6px}
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:var(--line)}
+.tl{position:relative;padding-bottom:14px}
+.tl::before{content:"";position:absolute;left:-19px;top:6px;width:9px;height:9px;border-radius:50%;background:#fff;
+  border:2px solid #9FD8D0}
+.tl.latest::before{border-color:var(--ok);background:var(--ok)}
+.tl .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl .date{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:76px}
+.tl .v{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.tl .rd{width:5px;height:5px;border-radius:50%;background:var(--danger)}
+.tl .cat{font-size:11.5px;font-weight:600;color:var(--ink-2);margin:4px 0 2px}
+.tl ul{margin:0;padding-left:14px}
+.tl li{font-size:12px;color:var(--ink-2);line-height:1.85;list-style:disc}
+.dfoot{display:flex;align-items:center;gap:10px;padding:11px 18px;border-top:1px solid var(--line-2);background:#FCFDFF}
+.dfoot .newtip{font-size:12px;color:var(--ink-2)}
+.dfoot .newtip b{color:var(--danger);font-variant-numeric:tabular-nums}
+.dfoot .sp{flex:1}
+.deco{position:absolute;right:14px;bottom:52px;font-size:76px;line-height:1;color:#C6E4F7;opacity:.35;
+  pointer-events:none;font-weight:700}
+.btn{height:32px;padding:0 14px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:12.5px;
+  color:var(--ink-2);transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:#B9CBEF;color:var(--brand);background:#FBFCFF}
+.btn.pri{background:linear-gradient(135deg,var(--brand),#3C7BEA);border-color:transparent;color:#fff;font-weight:600;
+  box-shadow:0 3px 10px rgba(30,91,214,.28)}
+.btn.pri:hover{color:#fff;filter:brightness(1.05)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn .spin{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;
+  animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pdlg{width:min(540px,92vw)}
+.pbody{padding:2px 20px 16px}
+.phead{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.phead .ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;color:#fff;background:linear-gradient(135deg,var(--brand),#4C8DFF)}
+.phead .ic.done{background:linear-gradient(135deg,#12A594,#4ECDC4)}
+.phead .ic.fail{background:linear-gradient(135deg,#E5484D,#F07178)}
+.phead .t1{font-size:13.5px;font-weight:700}
+.phead .t2{font-size:11.5px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.bar{height:7px;border-radius:8px;background:#EDF1F8;overflow:hidden;margin:5px 0 7px}
+.bar i{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#3C7BEA,#7FB2FF);
+  transition:width .12s linear}
+.bar.done i{background:linear-gradient(90deg,#12A594,#4ECDC4)}
+.bar.fail i{background:linear-gradient(90deg,#E5484D,#F07178)}
+.pmeta{display:flex;align-items:center;font-size:11.5px;color:var(--muted)}
+.pmeta .pct{font-variant-numeric:tabular-nums;font-weight:700;color:var(--brand);font-size:12.5px}
+.pmeta .sp{flex:1}
+.stages{margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
+.st{display:flex;align-items:center;gap:8px;font-size:12px;color:#8C96A6}
+.st .bd{width:15px;height:15px;border-radius:50%;border:1.5px solid #D7DEEA;display:flex;align-items:center;
+  justify-content:center;font-size:9px;color:transparent;flex:0 0 15px}
+.st.act{color:var(--ink);font-weight:600}
+.st.act .bd{border-color:var(--brand);border-top-color:transparent;animation:spin .8s linear infinite}
+.st.ok{color:var(--ink-2)}
+.st.ok .bd{background:var(--ok);border-color:var(--ok);color:#fff;animation:none}
+.errbox{margin-top:10px;padding:9px 11px;border-radius:9px;background:var(--danger-soft);color:#B4232A;
+  font-size:12px;line-height:1.7}
+.mocklink{font-size:10.5px;color:#D6DCE6}
+.mocklink:hover{color:var(--ink-2)}
+.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%) translateY(-10px);background:rgba(22,32,47,.94);
+  color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;opacity:0;pointer-events:none;transition:.22s;
+  z-index:95;box-shadow:0 6px 20px rgba(16,24,40,.18)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo" id="btnMenu2">YH</div>
+  <div class="u703">U703</div>
+  <button class="mbtn" id="btnMenu" title="菜单">☰</button>
+  <button class="sbtn" title="搜索">🔍</button>
+  <div class="tsp"></div>
+  <span class="tinfo" id="clock">2026-11-11 10:05</span>
+  <span class="uchip"><span class="av">张</span>张医生 · 放射科</span>
+</header>
+
+<!-- 主菜单 -->
+<div class="menu hidden" id="menu">
+  <div class="mi">患者管理</div>
+  <div class="mi" id="miSet">设置中心<span class="arr">▶</span>
+    <!-- 二级 -->
+    <div class="submenu" id="submenu">
+      <div class="smi"><span class="dot"></span>系统设置</div>
+      <div class="smi"><span class="dot"></span>影像显示</div>
+      <div class="smi"><span class="dot"></span>快捷键</div>
+      <div class="smi sep" id="miUpdate"><span class="dot"></span>检查更新</div>
+    </div>
+  </div>
+  <div class="mdiv"></div>
+  <div class="mi">关闭</div>
+  <div class="mfoot">阅片终端 <span id="footVer">V9.21</span></div>
+</div>
+
+<div class="work">
+  <section class="pane pat">
+    <div class="phd">待处理检查<span class="cnt" id="patCnt">6</span></div>
+    <div class="plist" id="plist"></div>
+  </section>
+
+  <section class="pane report">
+    <div class="rhd">
+      <span class="t">诊断报告</span>
+      <span class="meta" id="rMeta">钱多多 · 男 34岁 · CT胸部平扫 · 2609200359</span>
+      <span class="sp"></span>
+      <span class="chip">AI 已生成，待审核</span>
+    </div>
+    <div class="rbody">
+      <div class="sec">
+        <div class="lb">影像所见<span class="tg">AI 辅助</span></div>
+        <div class="ta">双肺纹理清晰，走行自然。右肺上叶见一磨玻璃结节，长径约 6.2 mm，边界清楚，密度均匀；
+周边未见明显胸膜牵拉。左肺未见明确实性结节。纵隔居中，气管及主支气管通畅，纵隔内未见肿大淋巴结。
+双侧胸腔未见积液，胸膜未见增厚。</div>
+      </div>
+      <div class="sec">
+        <div class="lb">诊断意见<span class="tg">AI 辅助</span></div>
+        <div class="ta">1. 右肺上叶磨玻璃结节（约 6.2 mm），建议 3 个月后 CT 随访。<br>
+2. 余双肺未见明确活动性病变。</div>
+      </div>
+    </div>
+    <div class="rfoot">
+      <span style="font-size:11.5px;color:var(--muted)">报告保存于 2026-11-11 09:52 · 阅片人 张医生</span>
+      <span class="tsp"></span>
+      <button class="btn">存草稿</button>
+      <button class="btn pri">提交报告</button>
+    </div>
+  </section>
+
+  <section class="pane ai">
+    <div class="phd">AI 辅助建议</div>
+    <div class="aibody">
+      <div class="aicard"><div class="t"><i></i>结节随访</div>
+        <div class="d">该结节 6.2 mm 属 Lung-RADS 2 类，建议 3 个月后复查薄层 CT。</div></div>
+      <div class="aicard"><div class="t"><i></i>对比既往</div>
+        <div class="d">2026-06-15 同部位未见该结节，本次为新增病灶。</div></div>
+      <div class="aicard"><div class="t"><i></i>结构化提示</div>
+        <div class="d">诊断意见建议补充部位、大小与随访建议三项要素。</div></div>
+    </div>
+  </section>
+</div>
+
+<!-- 发现新版本 -->
+<div class="mask hidden" id="mkInfo">
+  <div class="dlg">
+    <div class="dh">
+      <h3>发现新版本</h3>
+      <span class="ver" id="infoVer">V9.22</span>
+      <span class="sp"></span>
+      <div class="x" id="infoClose">×</div>
+    </div>
+    <div class="dbody"><div class="timeline" id="infoLog"></div></div>
+    <div class="deco">↑</div>
+    <div class="dfoot">
+      <span class="newtip">发现新版本：<b id="infoNew">V9.22</b>　更新包 <span id="infoSize">86.2 MB</span></span>
+      <span class="sp"></span>
+      <button class="btn" id="btnLater">稍后提醒</button>
+      <button class="btn pri" id="btnUpdate">立即更新</button>
+    </div>
+  </div>
+</div>
+
+<!-- 更新中 -->
+<div class="mask hidden" id="mkProg">
+  <div class="dlg pdlg">
+    <div class="dh">
+      <h3 id="pgTitle">正在更新</h3>
+      <span class="sp"></span>
+      <div class="x" id="pgClose">×</div>
+    </div>
+    <div class="pbody">
+      <div class="phead">
+        <div class="ic" id="pgIcon">↑</div>
+        <div>
+          <div class="t1" id="pgName">阅片终端更新</div>
+          <div class="t2" id="pgVer">V9.21 → V9.22</div>
+        </div>
+      </div>
+      <div class="bar" id="pgBar"><i></i></div>
+      <div class="pmeta">
+        <span class="pct" id="pgPct">0%</span>
+        <span style="margin-left:9px" id="pgStage">准备中…</span>
+        <span class="sp"></span>
+        <span id="pgDl"></span>
+        <a class="mocklink" id="btnMockFail" style="margin-left:9px" title="演示失败分支">模拟失败（演示）</a>
+      </div>
+      <div class="stages" id="pgStages">
+        <div class="st" data-k="0"><span class="bd">✓</span>连接更新服务器</div>
+        <div class="st" data-k="1"><span class="bd">✓</span>下载更新包（86.2 MB）</div>
+        <div class="st" data-k="2"><span class="bd">✓</span>校验安装包签名</div>
+        <div class="st" data-k="3"><span class="bd">✓</span>安装到本地</div>
+        <div class="st" data-k="4"><span class="bd">✓</span>重启客户端</div>
+      </div>
+      <div class="errbox hidden" id="pgErr"></div>
+    </div>
+    <div class="dfoot">
+      <span class="newtip" id="pgHint">更新过程约需 15 秒，期间可继续阅片</span>
+      <span class="sp"></span>
+      <button class="btn" id="btnBg">后台更新</button>
+      <button class="btn pri hidden" id="btnRetry">重试</button>
+      <button class="btn pri hidden" id="btnRestart">立即重启</button>
+      <button class="btn hidden" id="btnDone">稍后重启</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ================= 数据 ================= */
+var SYS = { cur:'V9.21', latest:'V9.22', size:'86.2 MB', sizeMb:86.2, pending:false, lastCheck:'2026-11-09 09:12' };
+
+var NOTES = [
+  ['V9.22','2026-11-03','优化',[
+    '新增 iCloud 影像批量下载，支持按检查批量导出',
+    '优化多设备影像显示，双屏阅片不再错位',
+    '优化 WiFi 传图稳定性，断网重连自动续传',
+    '优化报告回推队列，高峰时段延迟下降约 40%',
+    '修复部分已知问题']],
+  ['V9.21','2026-09-28','优化',['优化智能重建速度','修复部分已知问题']],
+  ['V9.18','2026-08-15','新增',['新增适配新一代 CT 设备的影像接入']]
+];
+
+var PATS = [
+  ['钱多多','男 34岁','2609200359','2026-11-11 09:40','w'],
+  ['周亦辰','女 42岁','2609200360','2026-11-11 09:36','g'],
+  ['许知微','男 56岁','2609200361','2026-11-11 09:32','w'],
+  ['林静','女 29岁','2609200362','2026-11-11 09:27','d'],
+  ['陈景明','男 61岁','2609200363','2026-11-11 09:21','g'],
+  ['赵清禾','女 37岁','2609200364','2026-11-11 09:17','w']
+];
+
+/* ================= 基础 ================= */
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(m){
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+function hasUpdate(){ return SYS.cur !== SYS.latest; }
+
+/* ================= 列表渲染 ================= */
+document.getElementById('plist').innerHTML = PATS.map(function (p, i){
+  return '<div class="pitem' + (i === 0 ? ' on' : '') + '">'
+    + '<div class="n1"><span class="st ' + p[4] + '"></span>' + esc(p[0]) + '</div>'
+    + '<div class="n2">' + esc(p[1]) + ' · ' + esc(p[2]) + '<br>' + esc(p[3]) + '</div></div>';
+}).join('');
+document.getElementById('plist').onclick = function (e){
+  var it = e.target.closest('.pitem');
+  if (!it) return;
+  [].forEach.call(this.children, function (x){ x.classList.remove('on'); });
+  it.classList.add('on');
+};
+
+/* ================= 菜单 ================= */
+var MENU = document.getElementById('menu');
+var SUB = document.getElementById('submenu');
+function closeMenu(){ MENU.classList.add('hidden'); SUB.classList.remove('on');
+  document.getElementById('btnMenu').classList.remove('on'); }
+document.getElementById('btnMenu').onclick = function (e){
+  e.stopPropagation();
+  var open = !MENU.classList.contains('hidden');
+  if (open){ closeMenu(); }
+  else { MENU.classList.remove('hidden'); this.classList.add('on'); }
+};
+document.getElementById('btnMenu2').onclick = function (e){
+  e.stopPropagation();
+  MENU.classList.toggle('hidden');
+  document.getElementById('btnMenu').classList.toggle('on', !MENU.classList.contains('hidden'));
+};
+document.getElementById('miSet').onclick = function (e){
+  e.stopPropagation();
+  SUB.classList.toggle('on');
+};
+document.addEventListener('click', function (e){
+  if (!MENU.contains(e.target)) closeMenu();
+});
+
+/* ================= 检查更新 ================= */
+document.getElementById('miUpdate').onclick = function (e){
+  e.stopPropagation();
+  closeMenu();
+  toast('正在检查更新…');
+  setTimeout(function (){
+    SYS.lastCheck = '刚刚';
+    if (hasUpdate()) openInfo();
+    else toast('已是最新版本 ' + SYS.cur);
+  }, 1000);
+};
+
+function openInfo(){
+  document.getElementById('infoVer').textContent = SYS.latest;
+  document.getElementById('infoNew').textContent = SYS.latest;
+  document.getElementById('infoSize').textContent = SYS.size;
+  document.getElementById('infoLog').innerHTML = NOTES.map(function (n, i){
+    return '<div class="tl' + (i === 0 ? ' latest' : '') + '">'
+      + '<div class="row1"><span class="date">' + esc(n[1]) + '</span>'
+      +   '<span class="v">' + esc(n[0]) + '</span>'
+      +   (i === 0 ? '<span class="rd"></span><span style="font-size:11px;color:#C3373B;font-weight:600">最新</span>' : '')
+      + '</div><div class="cat">' + esc(n[2]) + '</div>'
+      + '<ul>' + n[3].map(function (x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+  }).join('');
+  document.getElementById('mkInfo').classList.remove('hidden');
+}
+document.getElementById('infoClose').onclick =
+document.getElementById('btnLater').onclick = function (){
+  document.getElementById('mkInfo').classList.add('hidden');
+  toast('已稍后提醒，可在「设置中心 › 检查更新」再次检查');
+};
+
+/* ================= 进度 ================= */
+var STAGES = [
+  { k:0, t:'连接更新服务器', to:8 },
+  { k:1, t:'下载更新包',     to:62 },
+  { k:2, t:'校验安装包签名', to:74 },
+  { k:3, t:'安装到本地',     to:92 },
+  { k:4, t:'重启客户端',     to:100 }
+];
+var S = { pct:0, timer:null, failAt:0, hidden:false, phase:'idle' };
+
+function resetProg(){
+  document.getElementById('pgTitle').textContent = '正在更新';
+  document.getElementById('pgIcon').className = 'ic';
+  document.getElementById('pgIcon').textContent = '↑';
+  document.getElementById('pgBar').className = 'bar';
+  document.getElementById('pgBar').querySelector('i').style.width = '0%';
+  document.getElementById('pgPct').textContent = '0%';
+  document.getElementById('pgStage').textContent = '准备中…';
+  document.getElementById('pgDl').textContent = '';
+  document.getElementById('pgErr').classList.add('hidden');
+  document.getElementById('pgHint').textContent = '更新过程约需 15 秒，期间可继续阅片';
+  document.getElementById('pgVer').textContent = SYS.cur + ' → ' + SYS.latest;
+  document.getElementById('pgName').textContent = '阅片终端更新';
+  ['btnRetry','btnRestart','btnDone'].forEach(function (id){
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('btnBg').classList.remove('hidden');
+  document.getElementById('btnBg').disabled = false;
+  document.getElementById('btnMockFail').style.display = '';
+  [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){
+    el.className = 'st'; el.querySelector('.bd').textContent = '✓';
+  });
+  S.pct = 0; S.failAt = 0; S.hidden = false; S.phase = 'updating';
+  document.getElementById('mkProg').classList.remove('hidden');
+}
+
+function startUpdate(){
+  resetProg();
+  clearInterval(S.timer);
+  S.timer = setInterval(function (){
+    if (S.failAt && S.pct >= S.failAt){ clearInterval(S.timer); failUpdate(); return; }
+    S.pct += 0.7 + Math.random() * 1.6;
+    if (S.pct > 100) S.pct = 100;
+    var st = STAGES.filter(function (s){ return S.pct <= s.to; })[0] || STAGES[4];
+    document.getElementById('pgBar').querySelector('i').style.width = S.pct + '%';
+    document.getElementById('pgPct').textContent = Math.floor(S.pct) + '%';
+    document.getElementById('pgStage').textContent = st.t;
+    if (st.k === 1){
+      var dl = (SYS.sizeMb * Math.min(1, (S.pct - 8) / 54)).toFixed(1);
+      document.getElementById('pgDl').textContent = '下载中 ' + dl + ' / ' + SYS.sizeMb.toFixed(1) + ' MB（本阶段）';
+    } else {
+      document.getElementById('pgDl').textContent = '';
+    }
+    [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){
+      var k = +el.getAttribute('data-k');
+      el.className = k < st.k ? 'st ok' : (k === st.k ? 'st act' : 'st');
+    });
+    if (S.pct >= 100){ clearInterval(S.timer); installed(); }
+  }, 110);
+}
+
+function installed(){
+  S.phase = 'installed';
+  SYS.pending = true;
+  document.getElementById('pgTitle').textContent = '更新完成';
+  document.getElementById('pgIcon').className = 'ic done';
+  document.getElementById('pgIcon').textContent = '✓';
+  document.getElementById('pgBar').className = 'bar done';
+  document.getElementById('pgStage').textContent = '已完成';
+  document.getElementById('pgPct').textContent = '100%';
+  document.getElementById('pgDl').textContent = '';
+  [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){ el.className = 'st ok'; });
+  document.getElementById('pgHint').textContent = '新版本已安装，重启客户端后生效（约 5 秒）';
+  document.getElementById('btnBg').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = 'none';
+  document.getElementById('btnRestart').classList.remove('hidden');
+  document.getElementById('btnDone').classList.remove('hidden');
+  document.getElementById('btnDone').textContent = '稍后重启';
+  if (S.hidden){ document.getElementById('mkProg').classList.add('hidden'); }
+}
+
+function failUpdate(){
+  S.phase = 'failed';
+  document.getElementById('pgTitle').textContent = '更新失败';
+  document.getElementById('pgIcon').className = 'ic fail';
+  document.getElementById('pgIcon').textContent = '!';
+  document.getElementById('pgBar').className = 'bar fail';
+  document.getElementById('pgStage').textContent = '已中止';
+  document.getElementById('pgDl').textContent = '';
+  document.getElementById('pgErr').classList.remove('hidden');
+  document.getElementById('pgErr').innerHTML =
+    '安装包签名校验未通过（CODE E-1082），已自动回滚至 ' + esc(SYS.cur) + '。<br>'
+    + '客户端继续按旧版本运行，当前报告不会丢失，可继续阅片。';
+  document.getElementById('pgHint').textContent = '可重试，或稍后在「设置中心 › 检查更新」再次检查';
+  document.getElementById('btnBg').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = 'none';
+  document.getElementById('btnRetry').classList.remove('hidden');
+  document.getElementById('btnDone').classList.remove('hidden');
+  document.getElementById('btnDone').textContent = '关闭';
+  if (S.hidden){ document.getElementById('mkProg').classList.add('hidden'); toast('更新失败：安装包校验未通过（E-1082）'); }
+}
+
+function doRestart(){
+  document.getElementById('pgTitle').textContent = '正在重启客户端';
+  document.getElementById('pgIcon').className = 'ic';
+  document.getElementById('pgIcon').textContent = '↻';
+  document.getElementById('pgBar').className = 'bar';
+  document.getElementById('pgBar').querySelector('i').style.width = '30%';
+  document.getElementById('pgPct').textContent = '—';
+  document.getElementById('pgStage').textContent = '客户端重启中…';
+  document.getElementById('pgDl').textContent = '';
+  document.getElementById('pgHint').textContent = '重启期间客户端不可用，报告已自动保存';
+  document.getElementById('btnRestart').classList.add('hidden');
+  document.getElementById('btnDone').classList.add('hidden');
+  document.getElementById('mkProg').classList.remove('hidden');
+  S.phase = 'restarting';
+  setTimeout(function (){
+    SYS.cur = SYS.latest;
+    SYS.pending = false;
+    document.getElementById('footVer').textContent = SYS.cur;
+    document.getElementById('pgTitle').textContent = '重启完成';
+    document.getElementById('pgIcon').className = 'ic done';
+    document.getElementById('pgIcon').textContent = '✓';
+    document.getElementById('pgBar').className = 'bar done';
+    document.getElementById('pgBar').querySelector('i').style.width = '100%';
+    document.getElementById('pgPct').textContent = '100%';
+    document.getElementById('pgStage').textContent = '已启动';
+    document.getElementById('pgHint').textContent = '客户端已运行 ' + SYS.cur;
+    document.getElementById('btnDone').classList.remove('hidden');
+    document.getElementById('btnDone').textContent = '完成';
+    S.phase = 'restarted';
+  }, 2400);
+}
+
+document.getElementById('btnUpdate').onclick = function (){
+  document.getElementById('mkInfo').classList.add('hidden');
+  startUpdate();
+};
+document.getElementById('btnBg').onclick = function (){
+  S.hidden = true;
+  document.getElementById('mkProg').classList.add('hidden');
+  toast('已转为后台更新，完成后会提示重启');
+  var w = setInterval(function (){
+    if (S.phase === 'installed' || S.phase === 'failed'){
+      clearInterval(w);
+      toast(S.phase === 'installed' ? '更新包已安装，请重启客户端生效' : '更新失败：安装包校验未通过（E-1082）');
+    }
+  }, 400);
+};
+document.getElementById('btnRestart').onclick = doRestart;
+document.getElementById('btnRetry').onclick = function (){ startUpdate(); };
+document.getElementById('btnDone').onclick = function (){
+  document.getElementById('mkProg').classList.add('hidden');
+  if (S.phase === 'installed') toast('已推迟重启，重启后 ' + SYS.latest + ' 才会生效');
+};
+document.getElementById('pgClose').onclick = function (){
+  if (S.phase === 'updating' || S.phase === 'restarting'){ toast('任务进行中，完成后可关闭'); return; }
+  document.getElementById('mkProg').classList.add('hidden');
+};
+document.getElementById('btnMockFail').onclick = function (){
+  S.failAt = Math.max(20, S.pct + 14);
+  toast('将在 ' + Math.floor(S.failAt) + '% 时模拟失败');
+};
+
+/* 时钟 */
+(function tick(){
+  var d = new Date();
+  function p(n){ return n < 10 ? '0' + n : n; }
+  document.getElementById('clock').textContent = d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate())
+    + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  setTimeout(tick, 30000);
+})();
+</script>
+</body>
+</html>
