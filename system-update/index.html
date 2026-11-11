@@ -191,7 +191,7 @@ tbody tr:hover td{background:#F5F9FF}
 .st.ok .bd{background:var(--ok);border-color:var(--ok);color:#fff;animation:none}
 .errbox{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--danger-soft);color:#B4232A;
   font-size:12.5px;line-height:1.7}
-.mocklink{font-size:11.5px;color:#C3CBD9}
+.mocklink{font-size:11px;color:#D2D8E2;opacity:.85}
 .mocklink:hover{color:var(--ink-2)}
 
 .toast{position:fixed;left:50%;top:74px;transform:translateX(-50%) translateY(-10px);background:rgba(22,32,47,.94);
@@ -497,7 +497,7 @@ function startUpdate(){
     document.getElementById('pgStage').textContent = st.t;
     if (st.k === 1){
       var dl = (SYS.sizeMb * Math.min(1, (S.pct - 8) / 54)).toFixed(1);
-      document.getElementById('pgDl').textContent = '已下载 ' + dl + ' / ' + SYS.sizeMb.toFixed(1) + ' MB';
+      document.getElementById('pgDl').textContent = '下载中 ' + dl + ' / ' + SYS.sizeMb.toFixed(1) + ' MB（本阶段）';
     } else {
       document.getElementById('pgDl').textContent = '';
     }
