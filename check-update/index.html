@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>检查更新 · AI工具管理</title>
+<style>
+:root{
+  --brand:#2F5BFF; --brand-2:#5B8CFF; --brand-soft:#EEF3FF;
+  --ink:#16202F; --ink-2:#4E5A6E; --muted:#98A2B3;
+  --line:#E9EDF5; --line-2:#F1F4FA;
+  --bg:#F4F6FB; --card:#fff;
+  --ok:#12A594; --ok-soft:#E9F8F5; --warn:#D97706; --warn-soft:#FFF7E8;
+  --danger:#E5484D; --danger-soft:#FDECEC;
+  --sd-1:0 1px 2px rgba(16,24,40,.05);
+  --sd-2:0 6px 20px rgba(16,24,40,.07);
+  --sd-3:0 20px 50px rgba(16,24,40,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;
+  font-size:13px;color:var(--ink);background:var(--bg);
+  display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer}
+a{cursor:pointer;text-decoration:none}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#D3DAE6;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+
+/* 顶栏 */
+.top{height:56px;flex:0 0 56px;display:flex;align-items:center;gap:22px;padding:0 20px;background:#fff;
+  border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(16,24,40,.03);z-index:30}
+.brand{display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;white-space:nowrap}
+.logo{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#2F5BFF,#7FB2FF);color:#fff;font-size:11px;font-weight:700;
+  box-shadow:0 4px 12px rgba(47,91,255,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.tnav{display:flex;align-items:center;gap:2px;height:100%;font-size:13.5px;color:var(--ink-2)}
+.tnav a{height:100%;display:flex;align-items:center;padding:0 15px}
+.tnav a.on{color:var(--brand);font-weight:700;position:relative}
+.tnav a.on::after{content:"";position:absolute;left:15px;right:15px;bottom:0;height:3px;border-radius:3px 3px 0 0;
+  background:linear-gradient(90deg,var(--brand),#7FB2FF)}
+.tright{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ink-2)}
+.tright .pill{padding:5px 12px;border-radius:20px;background:#F5F7FC;border:1px solid var(--line)}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#E8EFFF,#DCE7FF);color:var(--brand);font-size:12px;font-weight:700;
+  border:1px solid #D8E3FF}
+
+.main{flex:1;min-height:0;display:flex}
+.side{width:200px;flex:0 0 200px;padding:14px 10px;background:linear-gradient(180deg,#101A2B,#16243A)}
+.gt{display:flex;align-items:center;gap:9px;padding:9px 10px 11px;font-size:13px;font-weight:600;color:#C9D4E4}
+.gt .ic{width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,var(--brand),#7FB2FF);
+  box-shadow:0 2px 8px rgba(47,91,255,.45)}
+.si{position:relative;display:flex;align-items:center;gap:8px;padding:10px 12px 10px 30px;font-size:13px;
+  color:#8D9CB2;border-radius:8px;margin:2px 0}
+.si::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:5px;height:5px;
+  border-radius:50%;background:#4A5A73}
+.si.on{color:#fff;font-weight:600;background:linear-gradient(90deg,rgba(47,91,255,.30),rgba(47,91,255,.06) 85%);
+  box-shadow:inset 0 0 0 1px rgba(122,160,255,.16)}
+.si.on::before{width:3px;height:14px;border-radius:3px;left:9px;background:linear-gradient(180deg,#7FB2FF,var(--brand))}
+.view{flex:1;min-width:0;display:flex;flex-direction:column;padding:14px 18px 16px;overflow:hidden}
+.crumb{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);margin-bottom:11px}
+.crumb b{color:var(--ink);font-weight:600}
+.crumb .sep{color:#C7CFDC}
+
+/* 工具条 */
+.fcard{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;border:1px solid var(--line);box-shadow:var(--sd-1);margin-bottom:12px}
+.inp{height:34px;border:1px solid var(--line);border-radius:9px;padding:0 10px;font-size:12.5px;
+  outline:none;font-family:inherit;background:#FCFDFF;color:var(--ink);transition:.16s;width:200px}
+.inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(47,91,255,.12)}
+.sel{height:34px;border:1px solid var(--line);border-radius:9px;padding:0 8px;font-size:12.5px;
+  background:#FCFDFF;color:var(--ink);outline:none;font-family:inherit}
+.sel:hover{border-color:#C9D6F5}
+.fcard .sp{flex:1}
+.btn{height:34px;padding:0 14px;border:1px solid var(--line);background:#fff;border-radius:9px;
+  font-size:12.5px;color:var(--ink-2);transition:.16s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:#C9D6F5;color:var(--brand);background:#FBFCFF}
+.btn.pri{background:linear-gradient(135deg,var(--brand),#4E7BFF);border-color:transparent;color:#fff;
+  font-weight:600;box-shadow:0 3px 10px rgba(47,91,255,.28)}
+.btn.pri:hover{color:#fff;filter:brightness(1.05)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn .spin{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.45);
+  border-top-color:#fff;animation:spin .7s linear infinite}
+.btn.ghost .spin{border-color:rgba(47,91,255,.25);border-top-color:var(--brand)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 表格 */
+.tcard{background:#fff;border-radius:12px;flex:1;min-height:0;display:flex;flex-direction:column;
+  border:1px solid var(--line);box-shadow:var(--sd-1);overflow:hidden}
+.thd{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line-2)}
+.thd .bar{width:3px;height:15px;border-radius:3px;background:linear-gradient(180deg,#7FB2FF,var(--brand))}
+.thd h2{font-size:14.5px;font-weight:700}
+.thd .cnt{font-size:12px;color:var(--brand);background:var(--brand-soft);padding:2px 9px;border-radius:9px;font-weight:600}
+.thd .sp{flex:1}
+.thd .tag{font-size:11.5px;padding:3px 10px;border-radius:20px;color:#526078;background:#F5F7FC;border:1px solid var(--line)}
+.tw{flex:1;min-height:0;overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+thead th{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,#FAFBFE,#F2F5FA);color:#5A6679;
+  font-weight:600;font-size:12px;letter-spacing:.3px;padding:11px 12px;white-space:nowrap;text-align:left;
+  border-bottom:1px solid var(--line)}
+tbody td{padding:11px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap;vertical-align:middle}
+tbody tr:nth-child(even) td{background:#FBFCFE}
+tbody tr:hover td{background:#F5F9FF}
+tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
+tbody tr:last-child td{border-bottom:none}
+.tname{font-weight:600}
+.sub{color:var(--muted);font-size:11.5px}
+.vtag{display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.vtag .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.vtag.new .dot{background:var(--danger);box-shadow:0 0 0 3px rgba(229,72,77,.12)}
+.vtag.new{color:var(--danger);font-weight:600}
+.vnum{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+.badge.ok{background:var(--ok-soft);color:#0E8A7C}
+.badge.new{background:var(--danger-soft);color:#C3373B}
+.badge.checking{background:#F1F4FA;color:#5A6679}
+.badge.fail{background:var(--warn-soft);color:#B45309}
+.badge i{width:5px;height:5px;border-radius:50%;background:currentColor}
+.lnk{color:var(--brand);font-size:12.5px}
+.lnk:hover{text-decoration:underline}
+.lnk.dis{color:#C2CBDA;cursor:not-allowed;text-decoration:none}
+.lnk+.lnk{margin-left:12px}
+.sw{position:relative;width:34px;height:18px;border-radius:20px;background:#D7DEEA;display:inline-block;
+  cursor:pointer;transition:.18s;vertical-align:middle}
+.sw.on{background:linear-gradient(135deg,var(--brand),#5B8CFF)}
+.sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;
+  transition:.18s;box-shadow:0 1px 3px rgba(16,24,40,.2)}
+.sw.on i{left:18px}
+.pg{display:flex;align-items:center;gap:12px;padding:11px 18px;border-top:1px solid var(--line-2);
+  font-size:12.5px;color:var(--muted);background:#FDFDFF}
+
+/* 弹窗 */
+.mask{position:fixed;inset:0;background:rgba(16,24,40,.45);display:flex;align-items:center;justify-content:center;
+  z-index:60;backdrop-filter:blur(2px)}
+.mask.hidden{display:none}
+.dlg{background:#fff;border-radius:16px;box-shadow:var(--sd-3);width:min(680px,92vw);max-height:86vh;
+  display:flex;flex-direction:column;overflow:hidden;animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.dh{display:flex;align-items:center;gap:10px;padding:16px 20px 12px}
+.dh h3{font-size:16px;font-weight:700}
+.dh .ver{font-size:12px;color:var(--danger);background:var(--danger-soft);padding:2px 9px;border-radius:9px;font-weight:600}
+.dh .sp{flex:1}
+.dh .x{width:28px;height:28px;line-height:26px;text-align:center;border-radius:8px;color:#B4BDCB;font-size:17px}
+.dh .x:hover{background:#F3F5FA;color:var(--ink-2)}
+.dbody{flex:1;min-height:0;overflow-y:auto;padding:0 20px 8px}
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:var(--line)}
+.tl{position:relative;padding:0 0 16px 0}
+.tl::before{content:"";position:absolute;left:-21px;top:6px;width:9px;height:9px;border-radius:50%;
+  background:#fff;border:2px solid #9FD8D0}
+.tl.latest::before{border-color:var(--ok);background:var(--ok)}
+.tl .row1{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tl .date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:78px}
+.tl .v{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.tl .rd{width:6px;height:6px;border-radius:50%;background:var(--danger);display:inline-block}
+.tl .cat{font-size:12px;font-weight:600;color:var(--ink-2);margin:5px 0 3px}
+.tl ul{margin:0 0 0 2px;padding-left:14px}
+.tl li{font-size:12.5px;color:var(--ink-2);line-height:1.9;list-style:disc}
+.dfoot{display:flex;align-items:center;gap:12px;padding:13px 20px;border-top:1px solid var(--line-2);background:#FCFDFF}
+.dfoot .newtip{font-size:12.5px;color:var(--ink-2)}
+.dfoot .newtip b{color:var(--danger)}
+.dfoot .sp{flex:1}
+.btn.upd{background:linear-gradient(135deg,#8FD9E8,#BFE6F5);border-color:transparent;color:#164E63;font-weight:700}
+.btn.upd:hover{color:#164E63;filter:brightness(.98)}
+.deco{position:absolute;right:16px;bottom:54px;font-size:88px;line-height:1;color:#BFE6F5;opacity:.35;
+  pointer-events:none;font-weight:700}
+
+/* 进度弹窗 */
+.pdlg{width:min(560px,92vw)}
+.pbody{padding:4px 22px 18px}
+.phead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.phead .ic{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:#fff;background:linear-gradient(135deg,var(--brand),#7FB2FF)}
+.phead .ic.done{background:linear-gradient(135deg,#12A594,#4ECDC4)}
+.phead .ic.fail{background:linear-gradient(135deg,#E5484D,#F07178)}
+.phead .t1{font-size:14px;font-weight:700}
+.phead .t2{font-size:12px;color:var(--muted);margin-top:2px}
+.bar{height:8px;border-radius:8px;background:#EDF1F8;overflow:hidden;margin:6px 0 8px}
+.bar i{display:block;height:100%;width:0;border-radius:8px;
+  background:linear-gradient(90deg,#4E7BFF,#7FB2FF);transition:width .12s linear}
+.bar.done i{background:linear-gradient(90deg,#12A594,#4ECDC4)}
+.bar.fail i{background:linear-gradient(90deg,#E5484D,#F07178)}
+.pmeta{display:flex;align-items:center;font-size:12px;color:var(--muted)}
+.pmeta .pct{font-variant-numeric:tabular-nums;font-weight:700;color:var(--brand);font-size:13px}
+.pmeta .sp{flex:1}
+.stages{margin:14px 0 0;display:flex;flex-direction:column;gap:9px}
+.st{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#8C96A6}
+.st .bd{width:16px;height:16px;border-radius:50%;border:1.5px solid #D7DEEA;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:transparent;flex:0 0 16px}
+.st.act{color:var(--ink);font-weight:600}
+.st.act .bd{border-color:var(--brand);border-top-color:transparent;animation:spin .8s linear infinite}
+.st.ok{color:var(--ink-2)}
+.st.ok .bd{background:var(--ok);border-color:var(--ok);color:#fff;animation:none}
+.errbox{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--danger-soft);color:#B4232A;
+  font-size:12.5px;line-height:1.7}
+.mocklink{font-size:11.5px;color:#B4BDCB;margin-left:auto}
+.mocklink:hover{color:var(--ink-2)}
+
+/* 批量弹窗 */
+.blist{margin:4px 0 6px}
+.bitem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.bitem:last-child{border-bottom:none}
+.bitem .nm{font-weight:600;font-size:13px}
+.bitem .vv{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bitem .sp{flex:1}
+
+.toast{position:fixed;left:50%;top:74px;transform:translateX(-50%) translateY(-10px);background:rgba(22,32,47,.94);
+  color:#fff;padding:9px 18px;border-radius:9px;font-size:12.5px;opacity:0;pointer-events:none;transition:.24s;
+  z-index:90;box-shadow:var(--sd-2)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><span class="logo">MIIA</span>MIIA-AI</div>
+  <nav class="tnav">
+    <a>实施</a><a>业务</a><a>数据</a><a>统计</a><a>监控</a><a class="on">应用</a><a>配置</a>
+  </nav>
+  <div class="tright">
+    <span class="pill">平台管理员</span>
+    <span class="avatar">VV</span>
+  </div>
+</header>
+
+<div class="main">
+  <aside class="side">
+    <div class="gt"><span class="ic"></span>AI工具管理</div>
+    <a class="si on">上架中心</a>
+    <a class="si">算法类型</a>
+    <a class="si">算法开通</a>
+    <a class="si">AI工具商店</a>
+  </aside>
+
+  <section class="view">
+    <div class="crumb">AI工具管理<span class="sep">/</span><b>上架中心</b></div>
+
+    <div class="fcard">
+      <input class="inp" id="kw" placeholder="搜索工具名称 / 厂商">
+      <select class="sel" id="fVendor">
+        <option value="">全部厂商</option>
+        <option>影禾</option><option>推想科技</option><option>联影智能</option><option>数坤科技</option>
+      </select>
+      <select class="sel" id="fState">
+        <option value="">全部状态</option>
+        <option value="new">有新版本</option>
+        <option value="ok">已是最新</option>
+      </select>
+      <div class="sp"></div>
+      <button class="btn" id="btnRefresh">刷新</button>
+      <button class="btn pri" id="btnCheckAll">检查更新</button>
+    </div>
+
+    <div class="tcard">
+      <div class="thd">
+        <span class="bar"></span>
+        <h2>AI 工具</h2>
+        <span class="cnt" id="cntTxt">共 0 个</span>
+        <span class="sp"></span>
+        <span class="tag" id="updTag">3 个可更新</span>
+      </div>
+      <div class="tw">
+        <table id="tbl">
+          <thead><tr>
+            <th>工具名称</th><th>厂商</th><th>当前版本</th><th>最新版本</th><th>部位</th>
+            <th>更新时间</th><th>状态</th><th>启用</th><th>操作</th>
+          </tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+      <div class="pg"><span id="pgTxt">共 0 个工具</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- 发现新版本 / 更新日志 -->
+<div class="mask hidden" id="mkInfo">
+  <div class="dlg" style="position:relative">
+    <div class="dh">
+      <h3 id="infoTitle">发现新版本</h3>
+      <span class="ver" id="infoVer">V9.22</span>
+      <span class="sp"></span>
+      <div class="x" id="infoClose">×</div>
+    </div>
+    <div class="dbody"><div class="timeline" id="infoLog"></div></div>
+    <div class="deco">↑</div>
+    <div class="dfoot" id="infoFoot">
+      <span class="newtip">发现新版本：<b id="infoNew">V9.22</b></span>
+      <span class="sp"></span>
+      <button class="btn" id="infoCancel">取消</button>
+      <button class="btn upd" id="btnUpdate">立即更新</button>
+    </div>
+  </div>
+</div>
+
+<!-- 更新进度 -->
+<div class="mask hidden" id="mkProg">
+  <div class="dlg pdlg">
+    <div class="dh">
+      <h3 id="pgTitle">正在更新</h3>
+      <span class="sp"></span>
+      <div class="x" id="pgClose">×</div>
+    </div>
+    <div class="pbody">
+      <div class="phead">
+        <div class="ic" id="pgIcon">↑</div>
+        <div>
+          <div class="t1" id="pgName">CT颅脑AIR</div>
+          <div class="t2" id="pgVer">V9.21 → V9.22</div>
+        </div>
+      </div>
+      <div class="bar" id="pgBar"><i></i></div>
+      <div class="pmeta">
+        <span class="pct" id="pgPct">0%</span>
+        <span style="margin-left:10px" id="pgStage">准备中…</span>
+        <span class="sp"></span>
+        <a class="mocklink" id="btnMockFail" title="用于演示失败分支">模拟失败（演示）</a>
+      </div>
+      <div class="stages" id="pgStages">
+        <div class="st" data-k="0"><span class="bd">✓</span>下载安装包</div>
+        <div class="st" data-k="1"><span class="bd">✓</span>校验完整性</div>
+        <div class="st" data-k="2"><span class="bd">✓</span>安装部署</div>
+        <div class="st" data-k="3"><span class="bd">✓</span>重载计算服务</div>
+      </div>
+      <div class="errbox hidden" id="pgErr"></div>
+    </div>
+    <div class="dfoot">
+      <span class="newtip" id="pgHint">更新过程约需 10 秒，请勿关闭页面</span>
+      <span class="sp"></span>
+      <button class="btn" id="btnBg">后台更新</button>
+      <button class="btn pri hidden" id="btnRetry">重试</button>
+      <button class="btn pri hidden" id="btnDone">完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 批量检查结果 -->
+<div class="mask hidden" id="mkBatch">
+  <div class="dlg">
+    <div class="dh">
+      <h3>检查更新结果</h3>
+      <span class="sp"></span>
+      <div class="x" id="batchClose">×</div>
+    </div>
+    <div class="dbody">
+      <div class="pmeta" style="margin:2px 0 10px">
+        <span id="batchSum">共检查 0 个工具</span>
+      </div>
+      <div class="blist" id="batchList"></div>
+    </div>
+    <div class="dfoot">
+      <span class="newtip" id="batchTip"></span>
+      <span class="sp"></span>
+      <button class="btn" id="batchCancel">关闭</button>
+      <button class="btn pri" id="btnUpdateAll">全部更新</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ================= 数据 ================= */
+var TOOLS = [
+  { id:'T1', name:'CT颅脑AIR',     vendor:'影禾',     cur:'V9.21',  latest:'V9.22',  part:'颅脑',      on:true,  updated:'2026-09-28 10:12' },
+  { id:'T2', name:'CT胸部AIR',     vendor:'影禾',     cur:'V9.22',  latest:'V9.22',  part:'胸部',      on:true,  updated:'2026-11-03 09:40' },
+  { id:'T3', name:'肺结节筛查',     vendor:'推想科技', cur:'V3.4.1', latest:'V3.5.0', part:'胸部',      on:true,  updated:'2026-08-19 14:05' },
+  { id:'T4', name:'骨折检测',       vendor:'联影智能', cur:'V2.8.0', latest:'V2.8.0', part:'四肢及关节', on:true,  updated:'2026-10-11 16:22' },
+  { id:'T5', name:'冠脉钙化积分',   vendor:'数坤科技', cur:'V1.9.3', latest:'V1.9.3', part:'心脏',      on:false, updated:'2026-07-02 11:03' },
+  { id:'T6', name:'骨龄评估',       vendor:'影禾',     cur:'V2.1.0', latest:'V2.2.0', part:'四肢及关节', on:true,  updated:'2026-06-15 09:31' },
+  { id:'T7', name:'脑出血检测',     vendor:'推想科技', cur:'V4.0.2', latest:'V4.0.2', part:'颅脑',      on:true,  updated:'2026-09-30 15:48' },
+  { id:'T8', name:'乳腺肿块检测',   vendor:'联影智能', cur:'V1.2.5', latest:'V1.2.5', part:'乳腺',      on:true,  updated:'2026-05-21 13:12' }
+];
+TOOLS.forEach(function (t){ t.st = 'idle'; });
+
+var NOTES = {
+  T1: [['V9.22','2026-11-03','优化',['提升颅脑出血检出灵敏度，小病灶召回提升 6.2%','新增中线偏移自动测量','优化 MPR 重建速度','修复部分已知问题']],
+       ['V9.21','2026-09-28','优化',['优化侧脑室分割精度','修复部分已知问题']],
+       ['V9.18','2026-08-15','新增',['新增脑梗责任血管提示']]],
+  T3: [['V3.5.0','2026-11-01','优化',['结节长径测量与 Lung-RADS 分级联动','新增 6mm 以下微小结节随访建议','优化薄层重建兼容性']],
+       ['V3.4.1','2026-08-19','修复',['修复部分已知问题']],
+       ['V3.3.0','2026-06-02','新增',['新增磨玻璃结节实性成分自动测量']]],
+  T6: [['V2.2.0','2026-10-28','优化',['骨龄评估误差由 ±0.6 岁收窄至 ±0.45 岁','新增左手正位片质控提示']],
+       ['V2.1.0','2026-06-15','优化',['优化骨骺识别']],
+       ['V2.0.3','2026-04-09','新增',['新增 TW3 法支持']]],
+  '_default': [['V9.22','2026-11-03','优化',['优化算法稳定性','修复部分已知问题']]]
+};
+
+var S = { kw:'', vendor:'', state:'', queue:[], qi:0, cur:null, timer:null, failAt:0, hidden:false };
+
+/* ================= 基础 ================= */
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function nowStr(){
+  var d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' '
+       + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(m){
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2400);
+}
+function byId(v){ return TOOLS.filter(function (t){ return t.id === v; })[0]; }
+function hasUpdate(t){ return t.cur !== t.latest; }
+
+/* ================= 列表 ================= */
+function rows(){
+  return TOOLS.filter(function (t){
+    if (S.kw && (t.name + t.vendor).toLowerCase().indexOf(S.kw.toLowerCase()) < 0) return false;
+    if (S.vendor && t.vendor !== S.vendor) return false;
+    if (S.state === 'new' && !hasUpdate(t)) return false;
+    if (S.state === 'ok' && hasUpdate(t)) return false;
+    return true;
+  });
+}
+function badge(t){
+  if (t.st === 'checking') return '<span class="badge checking"><i></i>检查中</span>';
+  if (t.st === 'updating') return '<span class="badge checking"><i></i>更新中</span>';
+  if (t.st === 'fail') return '<span class="badge fail"><i></i>更新失败</span>';
+  if (hasUpdate(t)) return '<span class="badge new"><i></i>有新版本</span>';
+  return '<span class="badge ok"><i></i>已是最新</span>';
+}
+function render(){
+  var rs = rows();
+  document.getElementById('cntTxt').textContent = '共 ' + rs.length + ' 个';
+  document.getElementById('pgTxt').textContent = '共 ' + rs.length + ' 个工具';
+  var n = TOOLS.filter(hasUpdate).length;
+  document.getElementById('updTag').textContent = n ? n + ' 个可更新' : '全部为最新版本';
+
+  document.getElementById('tb').innerHTML = rs.map(function (t){
+    var busy = t.st === 'checking' || t.st === 'updating';
+    var cls = hasUpdate(t) ? 'vtag new' : 'vtag';
+    return '<tr data-id="' + t.id + '">'
+      + '<td><div class="tname">' + esc(t.name) + '</div><div class="sub">' + esc(t.vendor) + '</div></td>'
+      + '<td class="vnum">' + esc(t.vendor) + '</td>'
+      + '<td><span class="' + cls + '"><span class="dot"></span>' + esc(t.cur) + '</span></td>'
+      + '<td class="vnum">' + esc(t.latest) + '</td>'
+      + '<td class="vnum">' + esc(t.part) + '</td>'
+      + '<td class="vnum">' + esc(t.updated) + '</td>'
+      + '<td>' + badge(t) + '</td>'
+      + '<td><span class="sw' + (t.on ? ' on' : '') + '" data-on="' + t.id + '"><i></i></span></td>'
+      + '<td>' + (busy
+          ? '<span class="lnk dis">检查更新</span>'
+          : '<a class="lnk" data-check="' + t.id + '">检查更新</a>')
+      + '<a class="lnk" data-log="' + t.id + '">更新日志</a></td>'
+      + '</tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;color:#9AA4B2;padding:40px 0">没有符合条件的工具</td></tr>';
+}
+
+/* ================= 发现新版本 ================= */
+var INFO_TOOL = null;
+function openInfo(t, mode){
+  INFO_TOOL = t;
+  var latest = t.latest;
+  document.getElementById('infoTitle').textContent = mode === 'log' ? '更新日志' : '发现新版本';
+  document.getElementById('infoVer').textContent = latest;
+  document.getElementById('infoVer').style.display = mode === 'log' ? 'none' : '';
+  var list = NOTES[t.id] || NOTES._default;
+  document.getElementById('infoLog').innerHTML = list.map(function (n, i){
+    return '<div class="tl' + (i === 0 ? ' latest' : '') + '">'
+      + '<div class="row1"><span class="date">' + esc(n[1]) + '</span>'
+      +   '<span class="v">' + esc(n[0]) + '</span>'
+      +   (i === 0 ? '<span class="rd"></span>' : '')
+      +   (i === 0 && mode !== 'log' ? '<span style="font-size:11.5px;color:#C3373B;font-weight:600">最新</span>' : '')
+      + '</div>'
+      + '<div class="cat">' + esc(n[2]) + '</div>'
+      + '<ul>' + n[3].map(function (x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
+      + '</div>';
+  }).join('');
+  document.getElementById('infoNew').textContent = latest;
+  document.getElementById('infoFoot').style.display = mode === 'log' ? 'none' : '';
+  document.getElementById('mkInfo').classList.remove('hidden');
+}
+document.getElementById('infoClose').onclick =
+document.getElementById('infoCancel').onclick = function (){
+  document.getElementById('mkInfo').classList.add('hidden');
+};
+
+/* ================= 检查更新 ================= */
+function checkOne(id){
+  var t = byId(id);
+  if (!t || t.st === 'checking' || t.st === 'updating') return;
+  t.st = 'checking'; render();
+  setTimeout(function (){
+    if (hasUpdate(t)){
+      t.st = 'idle'; render(); openInfo(t, 'info');
+    } else {
+      t.st = 'idle'; render();
+      toast('已是最新版本 ' + t.cur);
+    }
+  }, 900);
+}
+document.getElementById('btnCheckAll').onclick = function (){
+  if (this.disabled) return;
+  var btn = this;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>检查中…';
+  var targets = rows().slice();
+  targets.forEach(function (t){ t.st = 'checking'; });
+  render();
+  setTimeout(function (){
+    targets.forEach(function (t){ t.st = 'idle'; });
+    render();
+    btn.disabled = false;
+    btn.innerHTML = '检查更新';
+    var ups = targets.filter(hasUpdate);
+    openBatch(targets, ups);
+  }, 1400);
+};
+function openBatch(all, ups){
+  document.getElementById('batchSum').textContent =
+    '共检查 ' + all.length + ' 个工具，' + ups.length + ' 个有新版本，' + (all.length - ups.length) + ' 个已是最新';
+  document.getElementById('batchList').innerHTML = ups.map(function (t){
+    return '<div class="bitem"><span class="nm">' + esc(t.name) + '</span>'
+      + '<span class="vv">' + esc(t.vendor) + ' · ' + esc(t.cur) + ' → ' + esc(t.latest) + '</span>'
+      + '<span class="sp"></span>'
+      + '<a class="lnk" data-bupd="' + t.id + '">立即更新</a></div>';
+  }).join('') || '<div style="padding:24px 0;text-align:center;color:#9AA4B2">当前筛选范围内没有可更新的工具</div>';
+  document.getElementById('batchTip').textContent = ups.length ? '' : '全部为最新版本';
+  document.getElementById('btnUpdateAll').style.display = ups.length ? '' : 'none';
+  document.getElementById('mkBatch').classList.remove('hidden');
+}
+document.getElementById('batchClose').onclick =
+document.getElementById('batchCancel').onclick = function (){
+  document.getElementById('mkBatch').classList.add('hidden');
+};
+document.getElementById('btnUpdateAll').onclick = function (){
+  var ups = rows().filter(hasUpdate);
+  document.getElementById('mkBatch').classList.add('hidden');
+  if (!ups.length) return;
+  S.queue = ups.map(function (t){ return t.id; });
+  S.qi = 0;
+  runNext();
+};
+
+/* ================= 更新进度 ================= */
+var STAGES = [
+  { k:0, t:'下载安装包',   to:55 },
+  { k:1, t:'校验完整性',   to:70 },
+  { k:2, t:'安装部署',     to:90 },
+  { k:3, t:'重载计算服务', to:100 }
+];
+
+function resetProg(){
+  document.getElementById('pgTitle').textContent = '正在更新';
+  document.getElementById('pgIcon').className = 'ic';
+  document.getElementById('pgIcon').textContent = '↑';
+  document.getElementById('pgBar').className = 'bar';
+  document.getElementById('pgBar').querySelector('i').style.width = '0%';
+  document.getElementById('pgPct').textContent = '0%';
+  document.getElementById('pgStage').textContent = '准备中…';
+  document.getElementById('pgErr').classList.add('hidden');
+  document.getElementById('pgHint').textContent = '更新过程约需 10 秒，请勿关闭页面';
+  document.getElementById('btnBg').classList.remove('hidden');
+  document.getElementById('btnBg').disabled = false;
+  document.getElementById('btnRetry').classList.add('hidden');
+  document.getElementById('btnDone').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = '';
+  document.getElementById('pgClose').style.display = '';
+  [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){
+    el.className = 'st'; el.querySelector('.bd').textContent = '✓';
+  });
+  S.hidden = false; S.failAt = 0;
+  document.getElementById('mkProg').classList.remove('hidden');
+}
+
+function startUpdate(id){
+  var t = byId(id);
+  if (!t) return;
+  S.cur = id;
+  t.st = 'updating';
+  render();
+  resetProg();
+  var total = S.queue.length;
+  var label = total > 1 ? t.name + '（' + (S.qi + 1) + '/' + total + '）' : t.name;
+  document.getElementById('pgName').textContent = label;
+  document.getElementById('pgVer').textContent = t.cur + ' → ' + t.latest;
+
+  var pct = 0;
+  clearInterval(S.timer);
+  S.timer = setInterval(function (){
+    if (S.failAt && pct >= S.failAt){ clearInterval(S.timer); failUpdate(); return; }
+    pct += 0.7 + Math.random() * 1.5;
+    if (pct > 100) pct = 100;
+    var st = STAGES.filter(function (s){ return pct <= s.to; })[0] || STAGES[3];
+    document.getElementById('pgBar').querySelector('i').style.width = pct + '%';
+    document.getElementById('pgPct').textContent = Math.floor(pct) + '%';
+    document.getElementById('pgStage').textContent = st.t;
+    [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){
+      var k = +el.getAttribute('data-k');
+      if (k < st.k){ el.className = 'st ok'; }
+      else if (k === st.k){ el.className = 'st act'; }
+      else { el.className = 'st'; }
+    });
+    if (pct >= 100){ clearInterval(S.timer); doneUpdate(t); }
+  }, 110);
+}
+
+function doneUpdate(t){
+  t.cur = t.latest;
+  t.st = 'idle';
+  t.updated = nowStr();
+  render();
+  document.getElementById('pgTitle').textContent = '更新完成';
+  document.getElementById('pgIcon').className = 'ic done';
+  document.getElementById('pgIcon').textContent = '✓';
+  document.getElementById('pgBar').className = 'bar done';
+  document.getElementById('pgStage').textContent = '已完成';
+  document.getElementById('pgPct').textContent = '100%';
+  [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){ el.className = 'st ok'; });
+  document.getElementById('pgHint').textContent = '已更新至 ' + t.latest + '，配置已重载';
+  document.getElementById('btnBg').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = 'none';
+  document.getElementById('pgClose').style.display = '';
+  if (S.queue.length && S.qi < S.queue.length - 1){
+    document.getElementById('btnDone').classList.remove('hidden');
+    document.getElementById('btnDone').onclick = function (){
+      S.qi++; startUpdate(S.queue[S.qi]);
+    };
+  } else {
+    document.getElementById('btnDone').classList.remove('hidden');
+    document.getElementById('btnDone').onclick = function (){
+      document.getElementById('mkProg').classList.add('hidden');
+      S.queue = [];
+      toast('更新完成：' + t.name + ' 已更新至 ' + t.latest);
+    };
+  }
+  if (S.hidden){ document.getElementById('mkProg').classList.add('hidden'); }
+}
+
+function failUpdate(){
+  var t = byId(S.cur);
+  t.st = 'fail';
+  render();
+  document.getElementById('pgTitle').textContent = '更新失败';
+  document.getElementById('pgIcon').className = 'ic fail';
+  document.getElementById('pgIcon').textContent = '!';
+  document.getElementById('pgBar').className = 'bar fail';
+  document.getElementById('pgStage').textContent = '已中止';
+  document.getElementById('pgErr').classList.remove('hidden');
+  document.getElementById('pgErr').innerHTML =
+    '安装包校验未通过（CODE E-1082），已自动回滚至 ' + esc(t.cur) + '，当前服务不受影响。<br>'
+    + '建议检查网络或联系厂商重新获取安装包后重试。';
+  document.getElementById('pgHint').textContent = '可重试，或稍后在列表中再次更新';
+  document.getElementById('btnBg').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = 'none';
+  document.getElementById('btnRetry').classList.remove('hidden');
+  document.getElementById('btnDone').classList.remove('hidden');
+  document.getElementById('btnRetry').onclick = function (){
+    S.failAt = 0;
+    startUpdate(t.id);
+  };
+  document.getElementById('btnDone').onclick = function (){
+    document.getElementById('mkProg').classList.add('hidden');
+    S.queue = [];
+    toast('已取消更新，' + t.name + ' 保持 ' + t.cur);
+  };
+  if (S.hidden){ document.getElementById('mkProg').classList.add('hidden'); }
+}
+
+document.getElementById('btnBg').onclick = function (){
+  S.hidden = true;
+  document.getElementById('mkProg').classList.add('hidden');
+  toast('已转为后台更新，完成后会提示');
+};
+document.getElementById('pgClose').onclick = function (){
+  if (document.getElementById('btnDone').classList.contains('hidden')){
+    toast('更新进行中，完成后可关闭');
+    return;
+  }
+  document.getElementById('mkProg').classList.add('hidden');
+};
+document.getElementById('btnMockFail').onclick = function (){
+  S.failAt = Math.max(30, +document.getElementById('pgPct').textContent.replace('%','') + 12);
+  toast('将在 ' + Math.floor(S.failAt) + '% 时模拟失败');
+};
+document.getElementById('btnUpdate').onclick = function (){
+  var t = INFO_TOOL;
+  document.getElementById('mkInfo').classList.add('hidden');
+  if (!t) return;
+  S.queue = [t.id]; S.qi = 0;
+  startUpdate(t.id);
+};
+
+/* ================= 事件绑定 ================= */
+document.getElementById('tb').onclick = function (e){
+  var t = e.target;
+  var c = t.getAttribute && t.getAttribute('data-check');
+  var l = t.getAttribute && t.getAttribute('data-log');
+  var o = t.getAttribute && t.getAttribute('data-on');
+  if (c){ checkOne(c); return; }
+  if (l){ openInfo(byId(l), 'log'); return; }
+  if (o){
+    var tool = byId(o);
+    tool.on = !tool.on;
+    render();
+    toast(tool.name + (tool.on ? ' 已启用' : ' 已停用'));
+  }
+};
+document.getElementById('mkBatch').onclick = function (e){
+  var b = e.target.getAttribute && e.target.getAttribute('data-bupd');
+  if (!b) return;
+  document.getElementById('mkBatch').classList.add('hidden');
+  S.queue = [b]; S.qi = 0;
+  startUpdate(b);
+};
+document.getElementById('kw').oninput = function (){ S.kw = this.value.trim(); render(); };
+document.getElementById('fVendor').onchange = function (){ S.vendor = this.value; render(); };
+document.getElementById('fState').onchange = function (){ S.state = this.value; render(); };
+document.getElementById('btnRefresh').onclick = function (){ render(); toast('已刷新'); };
+
+render();
+
+</script>
+</body>
+</html>
