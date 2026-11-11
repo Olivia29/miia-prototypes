@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>系统检查更新 · MIIA-AI</title>
+<style>
+:root{
+  --brand:#2F5BFF; --brand-2:#5B8CFF; --brand-soft:#EEF3FF;
+  --ink:#16202F; --ink-2:#4E5A6E; --muted:#98A2B3;
+  --line:#E9EDF5; --line-2:#F1F4FA;
+  --bg:#F4F6FB; --card:#fff;
+  --ok:#12A594; --ok-soft:#E9F8F5; --warn:#D97706; --warn-soft:#FFF7E8;
+  --danger:#E5484D; --danger-soft:#FDECEC;
+  --sd-1:0 1px 2px rgba(16,24,40,.05);
+  --sd-2:0 6px 20px rgba(16,24,40,.07);
+  --sd-3:0 20px 50px rgba(16,24,40,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;font-size:13px;
+  color:var(--ink);background:var(--bg);display:flex;flex-direction:column;overflow:hidden;
+  -webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+a{cursor:pointer;text-decoration:none}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#D3DAE6;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+
+/* 顶栏 */
+.top{height:56px;flex:0 0 56px;display:flex;align-items:center;gap:22px;padding:0 20px;background:#fff;
+  border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(16,24,40,.03);z-index:30}
+.brand{display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;white-space:nowrap}
+.logo{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#2F5BFF,#7FB2FF);color:#fff;font-size:11px;font-weight:700;
+  box-shadow:0 4px 12px rgba(47,91,255,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.tnav{display:flex;align-items:center;gap:2px;height:100%;font-size:13.5px;color:var(--ink-2)}
+.tnav a{height:100%;display:flex;align-items:center;padding:0 15px}
+.tnav a.on{color:var(--brand);font-weight:700;position:relative}
+.tnav a.on::after{content:"";position:absolute;left:15px;right:15px;bottom:0;height:3px;border-radius:3px 3px 0 0;
+  background:linear-gradient(90deg,var(--brand),#7FB2FF)}
+.tright{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ink-2)}
+.tright .pill{padding:5px 12px;border-radius:20px;background:#F5F7FC;border:1px solid var(--line)}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#E8EFFF,#DCE7FF);color:var(--brand);font-size:12px;font-weight:700;
+  border:1px solid #D8E3FF}
+
+.main{flex:1;min-height:0;display:flex}
+.side{width:200px;flex:0 0 200px;padding:14px 10px;background:linear-gradient(180deg,#101A2B,#16243A)}
+.gt{display:flex;align-items:center;gap:9px;padding:9px 10px 11px;font-size:13px;font-weight:600;color:#C9D4E4}
+.gt .ic{width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,var(--brand),#7FB2FF);
+  box-shadow:0 2px 8px rgba(47,91,255,.45)}
+.si{position:relative;display:flex;align-items:center;gap:8px;padding:10px 12px 10px 30px;font-size:13px;
+  color:#8D9CB2;border-radius:8px;margin:2px 0}
+.si::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:5px;height:5px;
+  border-radius:50%;background:#4A5A73}
+.si.on{color:#fff;font-weight:600;background:linear-gradient(90deg,rgba(47,91,255,.30),rgba(47,91,255,.06) 85%);
+  box-shadow:inset 0 0 0 1px rgba(122,160,255,.16)}
+.si.on::before{width:3px;height:14px;border-radius:3px;left:9px;background:linear-gradient(180deg,#7FB2FF,var(--brand))}
+
+.view{flex:1;min-width:0;display:flex;flex-direction:column;padding:14px 18px 16px;overflow-y:auto}
+.crumb{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);margin-bottom:11px}
+.crumb b{color:var(--ink);font-weight:600}
+.crumb .sep{color:#C7CFDC}
+
+.card{background:#fff;border-radius:12px;border:1px solid var(--line);box-shadow:var(--sd-1);margin-bottom:14px;overflow:hidden}
+.chd{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line-2)}
+.chd .bar{width:3px;height:15px;border-radius:3px;background:linear-gradient(180deg,#7FB2FF,var(--brand))}
+.chd h2{font-size:14.5px;font-weight:700}
+.chd .sp{flex:1}
+.chd .tag{font-size:11.5px;padding:3px 10px;border-radius:20px;color:#526078;background:#F5F7FC;border:1px solid var(--line)}
+
+/* 关于本系统 */
+.about{display:flex;gap:22px;padding:22px;align-items:flex-start}
+.appicon{width:64px;height:64px;border-radius:18px;flex:0 0 64px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#2F5BFF,#7FB2FF);color:#fff;font-size:20px;font-weight:700;
+  box-shadow:0 10px 24px rgba(47,91,255,.30),inset 0 1px 0 rgba(255,255,255,.35)}
+.ainfo{flex:1;min-width:0}
+.ainfo h1{font-size:19px;font-weight:700;letter-spacing:.2px}
+.ainfo .desc{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.7}
+.vrow{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.vbig{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.vbadge{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--ok-soft);color:#0E8A7C}
+.vbadge.pend{background:var(--warn-soft);color:#B45309}
+.act{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.btn{height:36px;padding:0 16px;border:1px solid var(--line);background:#fff;border-radius:9px;
+  font-size:13px;color:var(--ink-2);transition:.16s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{border-color:#C9D6F5;color:var(--brand);background:#FBFCFF}
+.btn.pri{background:linear-gradient(135deg,var(--brand),#4E7BFF);border-color:transparent;color:#fff;font-weight:600;
+  box-shadow:0 3px 10px rgba(47,91,255,.28)}
+.btn.pri:hover{color:#fff;filter:brightness(1.05)}
+.btn.lg{height:40px;padding:0 22px;font-size:13.5px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn .spin{width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.45);
+  border-top-color:#fff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lastcheck{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* 信息网格 */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-2);background:#FCFDFF}
+.gcell{padding:14px 18px;border-right:1px solid var(--line-2)}
+.gcell:last-child{border-right:none}
+.gcell .k{font-size:11.5px;color:var(--muted);margin-bottom:5px}
+.gcell .v{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* 表格 */
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+thead th{background:linear-gradient(180deg,#FAFBFE,#F2F5FA);color:#5A6679;font-weight:600;font-size:12px;
+  letter-spacing:.3px;padding:10px 18px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}
+tbody td{padding:11px 18px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#F5F9FF}
+.vnum{font-variant-numeric:tabular-nums}
+.type{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:20px;background:#F1F4FA;color:#5A6679}
+.type.new{background:var(--brand-soft);color:var(--brand)}
+
+/* 设置行 */
+.setrow{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+.setrow:last-child{border-bottom:none}
+.setrow .k{font-size:13px;font-weight:600;min-width:110px}
+.setrow .d{font-size:12px;color:var(--muted);flex:1}
+.sw{position:relative;width:38px;height:20px;border-radius:20px;background:#D7DEEA;display:inline-block;
+  cursor:pointer;transition:.18s}
+.sw.on{background:linear-gradient(135deg,var(--brand),#5B8CFF)}
+.sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.18s;
+  box-shadow:0 1px 3px rgba(16,24,40,.2)}
+.sw.on i{left:20px}
+.sel{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12.5px;background:#FCFDFF;
+  color:var(--ink);outline:none;font-family:inherit}
+
+/* 弹窗 */
+.mask{position:fixed;inset:0;background:rgba(16,24,40,.45);display:flex;align-items:center;justify-content:center;
+  z-index:60;backdrop-filter:blur(2px)}
+.mask.hidden{display:none}
+.dlg{position:relative;background:#fff;border-radius:16px;box-shadow:var(--sd-3);width:min(680px,92vw);max-height:86vh;
+  display:flex;flex-direction:column;overflow:hidden;animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.dh{display:flex;align-items:center;gap:10px;padding:16px 20px 12px}
+.dh h3{font-size:16px;font-weight:700}
+.dh .ver{font-size:12px;color:var(--danger);background:var(--danger-soft);padding:2px 9px;border-radius:9px;font-weight:600;
+  font-variant-numeric:tabular-nums}
+.dh .sp{flex:1}
+.dh .x{width:28px;height:28px;line-height:26px;text-align:center;border-radius:8px;color:#B4BDCB;font-size:17px}
+.dh .x:hover{background:#F3F5FA;color:var(--ink-2)}
+.dbody{flex:1;min-height:0;overflow-y:auto;padding:0 20px 8px}
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:var(--line)}
+.tl{position:relative;padding-bottom:16px}
+.tl::before{content:"";position:absolute;left:-21px;top:6px;width:9px;height:9px;border-radius:50%;background:#fff;
+  border:2px solid #9FD8D0}
+.tl.latest::before{border-color:var(--ok);background:var(--ok)}
+.tl .row1{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tl .date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:78px}
+.tl .v{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.tl .rd{width:6px;height:6px;border-radius:50%;background:var(--danger)}
+.tl .cat{font-size:12px;font-weight:600;color:var(--ink-2);margin:5px 0 3px}
+.tl ul{margin:0 0 0 2px;padding-left:14px}
+.tl li{font-size:12.5px;color:var(--ink-2);line-height:1.9;list-style:disc}
+.dfoot{display:flex;align-items:center;gap:12px;padding:13px 20px;border-top:1px solid var(--line-2);background:#FCFDFF}
+.dfoot .newtip{font-size:12.5px;color:var(--ink-2)}
+.dfoot .newtip b{color:var(--danger);font-variant-numeric:tabular-nums}
+.dfoot .sp{flex:1}
+.deco{position:absolute;right:18px;bottom:58px;font-size:88px;line-height:1;color:#BFE6F5;opacity:.35;
+  pointer-events:none;font-weight:700}
+
+/* 进度 */
+.pdlg{width:min(560px,92vw)}
+.pbody{padding:4px 22px 18px}
+.phead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.phead .ic{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:#fff;background:linear-gradient(135deg,var(--brand),#7FB2FF)}
+.phead .ic.done{background:linear-gradient(135deg,#12A594,#4ECDC4)}
+.phead .ic.fail{background:linear-gradient(135deg,#E5484D,#F07178)}
+.phead .t1{font-size:14px;font-weight:700}
+.phead .t2{font-size:12px;color:var(--muted);margin-top:2px}
+.bar{height:8px;border-radius:8px;background:#EDF1F8;overflow:hidden;margin:6px 0 8px}
+.bar i{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#4E7BFF,#7FB2FF);
+  transition:width .12s linear}
+.bar.done i{background:linear-gradient(90deg,#12A594,#4ECDC4)}
+.bar.fail i{background:linear-gradient(90deg,#E5484D,#F07178)}
+.pmeta{display:flex;align-items:center;font-size:12px;color:var(--muted)}
+.pmeta .pct{font-variant-numeric:tabular-nums;font-weight:700;color:var(--brand);font-size:13px}
+.pmeta .sp{flex:1}
+.stages{margin:14px 0 0;display:flex;flex-direction:column;gap:9px}
+.st{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#8C96A6}
+.st .bd{width:16px;height:16px;border-radius:50%;border:1.5px solid #D7DEEA;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:transparent;flex:0 0 16px}
+.st.act{color:var(--ink);font-weight:600}
+.st.act .bd{border-color:var(--brand);border-top-color:transparent;animation:spin .8s linear infinite}
+.st.ok{color:var(--ink-2)}
+.st.ok .bd{background:var(--ok);border-color:var(--ok);color:#fff;animation:none}
+.errbox{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--danger-soft);color:#B4232A;
+  font-size:12.5px;line-height:1.7}
+.mocklink{font-size:11.5px;color:#C3CBD9}
+.mocklink:hover{color:var(--ink-2)}
+
+.toast{position:fixed;left:50%;top:74px;transform:translateX(-50%) translateY(-10px);background:rgba(22,32,47,.94);
+  color:#fff;padding:9px 18px;border-radius:9px;font-size:12.5px;opacity:0;pointer-events:none;transition:.24s;
+  z-index:90;box-shadow:var(--sd-2)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><span class="logo">MIIA</span>MIIA-AI</div>
+  <nav class="tnav">
+    <a>实施</a><a>业务</a><a>数据</a><a>统计</a><a>监控</a><a>应用</a><a class="on">系统</a>
+  </nav>
+  <div class="tright">
+    <span class="pill">平台管理员</span>
+    <span class="avatar">VV</span>
+  </div>
+</header>
+
+<div class="main">
+  <aside class="side">
+    <div class="gt"><span class="ic"></span>系统管理</div>
+    <a class="si on">关于本系统</a>
+    <a class="si">更新设置</a>
+    <a class="si">授权信息</a>
+    <a class="si">运行环境</a>
+  </aside>
+
+  <section class="view">
+    <div class="crumb">系统管理<span class="sep">/</span><b>关于本系统</b></div>
+
+    <div class="card">
+      <div class="about">
+        <div class="appicon">M</div>
+        <div class="ainfo">
+          <h1>MIIA-AI 医学影像 AI 平台</h1>
+          <div class="desc">多模态影像 AI 计算与报告工作流平台 · 服务端组件</div>
+          <div class="vrow">
+            <span class="vbig" id="curVer">V9.21</span>
+            <span class="vbadge" id="verBadge">已是最新</span>
+            <span class="lastcheck" id="lastCheck">上次检查：2026-11-09 09:12</span>
+          </div>
+        </div>
+        <div class="act">
+          <button class="btn pri lg" id="btnCheck">检查更新</button>
+          <span class="lastcheck">当前通道：稳定版</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="gcell"><div class="k">系统版本</div><div class="v" id="gridVer">V9.21</div></div>
+        <div class="gcell"><div class="k">更新通道</div><div class="v">稳定版</div></div>
+        <div class="gcell"><div class="k">部署方式</div><div class="v">私有化 · 单机</div></div>
+        <div class="gcell"><div class="k">授权状态</div><div class="v" style="color:#0E8A7C">已授权 · 2027-06-30 到期</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chd"><span class="bar"></span><h2>版本记录</h2><span class="sp"></span>
+        <span class="tag" id="histTag">共 3 个版本</span></div>
+      <table>
+        <thead><tr><th>版本</th><th>发布日期</th><th>类型</th><th>说明</th></tr></thead>
+        <tbody id="histTb"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="chd"><span class="bar"></span><h2>更新设置</h2></div>
+      <div class="setrow">
+        <div class="k">自动检查更新</div>
+        <div class="d">每天首次登录时自动检查一次，仅提示不自动安装</div>
+        <span class="sw on" id="swAuto"><i></i></span>
+      </div>
+      <div class="setrow">
+        <div class="k">更新通道</div>
+        <div class="d">稳定版经过完整回归验证；测试版提前获得修复，不建议生产环境使用</div>
+        <select class="sel" id="chanSel"><option>稳定版</option><option>测试版</option></select>
+      </div>
+      <div class="setrow">
+        <div class="k">更新方式</div>
+        <div class="d">就地升级，保留配置与数据；升级失败自动回滚至上一版本</div>
+        <span style="font-size:12.5px;color:var(--muted)">自动回滚已开启</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 发现新版本 -->
+<div class="mask hidden" id="mkInfo">
+  <div class="dlg">
+    <div class="dh">
+      <h3>发现新版本</h3>
+      <span class="ver" id="infoVer">V9.22</span>
+      <span class="sp"></span>
+      <div class="x" id="infoClose">×</div>
+    </div>
+    <div class="dbody"><div class="timeline" id="infoLog"></div></div>
+    <div class="deco">↑</div>
+    <div class="dfoot">
+      <span class="newtip">发现新版本：<b id="infoNew">V9.22</b>　更新包 <span id="infoSize">86.2 MB</span></span>
+      <span class="sp"></span>
+      <button class="btn" id="btnLater">稍后提醒</button>
+      <button class="btn pri" id="btnUpdate">立即更新</button>
+    </div>
+  </div>
+</div>
+
+<!-- 更新 / 重启 -->
+<div class="mask hidden" id="mkProg">
+  <div class="dlg pdlg">
+    <div class="dh">
+      <h3 id="pgTitle">正在更新</h3>
+      <span class="sp"></span>
+      <div class="x" id="pgClose">×</div>
+    </div>
+    <div class="pbody">
+      <div class="phead">
+        <div class="ic" id="pgIcon">↑</div>
+        <div>
+          <div class="t1" id="pgName">MIIA-AI 系统更新</div>
+          <div class="t2" id="pgVer">V9.21 → V9.22</div>
+        </div>
+      </div>
+      <div class="bar" id="pgBar"><i></i></div>
+      <div class="pmeta">
+        <span class="pct" id="pgPct">0%</span>
+        <span style="margin-left:10px" id="pgStage">准备中…</span>
+        <span class="sp"></span>
+        <span id="pgDl"></span>
+        <a class="mocklink" id="btnMockFail" title="用于演示失败分支" style="margin-left:10px">模拟失败（演示）</a>
+      </div>
+      <div class="stages" id="pgStages">
+        <div class="st" data-k="0"><span class="bd">✓</span>连接更新服务器</div>
+        <div class="st" data-k="1"><span class="bd">✓</span>下载更新包（86.2 MB）</div>
+        <div class="st" data-k="2"><span class="bd">✓</span>校验安装包签名</div>
+        <div class="st" data-k="3"><span class="bd">✓</span>安装更新</div>
+        <div class="st" data-k="4"><span class="bd">✓</span>重启服务</div>
+      </div>
+      <div class="errbox hidden" id="pgErr"></div>
+    </div>
+    <div class="dfoot">
+      <span class="newtip" id="pgHint">更新过程约需 15 秒，期间服务保持可用</span>
+      <span class="sp"></span>
+      <button class="btn" id="btnBg">后台更新</button>
+      <button class="btn pri hidden" id="btnRetry">重试</button>
+      <button class="btn pri hidden" id="btnRestart">立即重启</button>
+      <button class="btn hidden" id="btnDone">稍后重启</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ================= 版本数据 ================= */
+var SYS = {
+  cur: 'V9.21',
+  latest: 'V9.22',
+  size: '86.2 MB',
+  sizeMb: 86.2,
+  lastCheck: '2026-11-09 09:12',
+  updated: '2026-09-28 10:12',
+  pending: false
+};
+
+var HISTORY = [
+  ['V9.22', '2026-11-03', '优化', '新增 iCloud 影像批量下载；优化多设备影像显示；优化 WiFi 传图稳定性；修复部分已知问题', 'new'],
+  ['V9.21', '2026-09-28', '优化', '优化智能重建速度；修复部分已知问题', ''],
+  ['V9.18', '2026-08-15', '新增', '新增适配新一代 CT 设备的影像接入', '']
+];
+
+var NOTES = [
+  ['V9.22', '2026-11-03', '优化', [
+    '新增 iCloud 影像批量下载，支持按检查批量导出',
+    '优化多设备影像显示，双屏阅片不再错位',
+    '优化 WiFi 传图稳定性，断网重连自动续传',
+    '优化报告回推队列，高峰时段延迟下降约 40%',
+    '修复部分已知问题'
+  ]],
+  ['V9.21', '2026-09-28', '优化', ['优化智能重建速度', '修复部分已知问题']],
+  ['V9.18', '2026-08-15', '新增', ['新增适配新一代 CT 设备的影像接入']]
+];
+
+/* ================= 基础 ================= */
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function nowStr(){
+  var d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' '
+       + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(m){
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+function hasUpdate(){ return SYS.cur !== SYS.latest; }
+
+function renderPage(){
+  document.getElementById('curVer').textContent = SYS.cur;
+  document.getElementById('gridVer').textContent = SYS.cur;
+  document.getElementById('lastCheck').textContent = '上次检查：' + SYS.lastCheck;
+  var b = document.getElementById('verBadge');
+  if (SYS.pending){ b.textContent = '待重启生效'; b.className = 'vbadge pend'; }
+  else if (hasUpdate()){ b.textContent = '有新版本可用'; b.className = 'vbadge pend'; }
+  else { b.textContent = '已是最新'; b.className = 'vbadge'; }
+
+  document.getElementById('histTb').innerHTML = HISTORY.map(function (h){
+    return '<tr><td class="vnum" style="font-weight:600">' + esc(h[0]) + '</td>'
+      + '<td class="vnum">' + esc(h[1]) + '</td>'
+      + '<td><span class="type ' + h[4] + '">' + esc(h[2]) + '</span></td>'
+      + '<td style="color:#4E5A6E">' + esc(h[3]) + '</td></tr>';
+  }).join('');
+}
+
+/* ================= 检查更新 ================= */
+document.getElementById('btnCheck').onclick = function (){
+  var btn = this;
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>检查中…';
+  setTimeout(function (){
+    btn.disabled = false;
+    btn.innerHTML = '检查更新';
+    SYS.lastCheck = nowStr();
+    renderPage();
+    if (hasUpdate()){
+      openInfo();
+    } else {
+      toast('已是最新版本 ' + SYS.cur);
+    }
+  }, 1100);
+};
+
+function openInfo(){
+  document.getElementById('infoVer').textContent = SYS.latest;
+  document.getElementById('infoNew').textContent = SYS.latest;
+  document.getElementById('infoSize').textContent = SYS.size;
+  document.getElementById('infoLog').innerHTML = NOTES.map(function (n, i){
+    return '<div class="tl' + (i === 0 ? ' latest' : '') + '">'
+      + '<div class="row1"><span class="date">' + esc(n[1]) + '</span>'
+      +   '<span class="v">' + esc(n[0]) + '</span>'
+      +   (i === 0 ? '<span class="rd"></span><span style="font-size:11.5px;color:#C3373B;font-weight:600">最新</span>' : '')
+      + '</div>'
+      + '<div class="cat">' + esc(n[2]) + '</div>'
+      + '<ul>' + n[3].map(function (x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
+      + '</div>';
+  }).join('');
+  document.getElementById('mkInfo').classList.remove('hidden');
+}
+document.getElementById('infoClose').onclick =
+document.getElementById('btnLater').onclick = function (){
+  document.getElementById('mkInfo').classList.add('hidden');
+  toast('已稍后提醒，可在「关于本系统」随时检查更新');
+};
+
+/* ================= 更新进度 ================= */
+var STAGES = [
+  { k:0, t:'连接更新服务器', to:8 },
+  { k:1, t:'下载更新包',     to:62 },
+  { k:2, t:'校验安装包签名', to:74 },
+  { k:3, t:'安装更新',       to:92 },
+  { k:4, t:'重启服务',       to:100 }
+];
+var S = { pct:0, timer:null, failAt:0, hidden:false, phase:'idle' };
+
+function resetProg(){
+  document.getElementById('pgTitle').textContent = '正在更新';
+  document.getElementById('pgIcon').className = 'ic';
+  document.getElementById('pgIcon').textContent = '↑';
+  document.getElementById('pgBar').className = 'bar';
+  document.getElementById('pgBar').querySelector('i').style.width = '0%';
+  document.getElementById('pgPct').textContent = '0%';
+  document.getElementById('pgStage').textContent = '准备中…';
+  document.getElementById('pgDl').textContent = '';
+  document.getElementById('pgErr').classList.add('hidden');
+  document.getElementById('pgHint').textContent = '更新过程约需 15 秒，期间服务保持可用';
+  document.getElementById('pgVer').textContent = SYS.cur + ' → ' + SYS.latest;
+  document.getElementById('pgName').textContent = 'MIIA-AI 系统更新';
+  ['btnBg','btnRetry','btnRestart','btnDone'].forEach(function (id){
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('btnBg').classList.remove('hidden');
+  document.getElementById('btnBg').disabled = false;
+  document.getElementById('btnMockFail').style.display = '';
+  [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){
+    el.className = 'st'; el.querySelector('.bd').textContent = '✓';
+  });
+  S.pct = 0; S.failAt = 0; S.hidden = false; S.phase = 'updating';
+  document.getElementById('mkProg').classList.remove('hidden');
+}
+
+function startUpdate(){
+  resetProg();
+  clearInterval(S.timer);
+  S.timer = setInterval(function (){
+    if (S.failAt && S.pct >= S.failAt){ clearInterval(S.timer); failUpdate(); return; }
+    S.pct += 0.7 + Math.random() * 1.6;
+    if (S.pct > 100) S.pct = 100;
+    var st = STAGES.filter(function (s){ return S.pct <= s.to; })[0] || STAGES[4];
+    document.getElementById('pgBar').querySelector('i').style.width = S.pct + '%';
+    document.getElementById('pgPct').textContent = Math.floor(S.pct) + '%';
+    document.getElementById('pgStage').textContent = st.t;
+    if (st.k === 1){
+      var dl = (SYS.sizeMb * Math.min(1, (S.pct - 8) / 54)).toFixed(1);
+      document.getElementById('pgDl').textContent = '已下载 ' + dl + ' / ' + SYS.sizeMb.toFixed(1) + ' MB';
+    } else {
+      document.getElementById('pgDl').textContent = '';
+    }
+    [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){
+      var k = +el.getAttribute('data-k');
+      el.className = k < st.k ? 'st ok' : (k === st.k ? 'st act' : 'st');
+    });
+    if (S.pct >= 100){ clearInterval(S.timer); installed(); }
+  }, 110);
+}
+
+function installed(){
+  S.phase = 'installed';
+  SYS.pending = true;
+  document.getElementById('pgTitle').textContent = '更新完成';
+  document.getElementById('pgIcon').className = 'ic done';
+  document.getElementById('pgIcon').textContent = '✓';
+  document.getElementById('pgBar').className = 'bar done';
+  document.getElementById('pgStage').textContent = '已完成';
+  document.getElementById('pgPct').textContent = '100%';
+  document.getElementById('pgDl').textContent = '';
+  [].forEach.call(document.querySelectorAll('#pgStages .st'), function (el){ el.className = 'st ok'; });
+  document.getElementById('pgHint').textContent = '新版本已安装，重启服务后生效（约 20 秒，期间不可用）';
+  document.getElementById('btnBg').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = 'none';
+  document.getElementById('btnRestart').classList.remove('hidden');
+  document.getElementById('btnDone').classList.remove('hidden');
+  document.getElementById('btnDone').textContent = '稍后重启';
+  renderPage();
+  if (S.hidden){ document.getElementById('mkProg').classList.add('hidden'); }
+}
+
+function failUpdate(){
+  S.phase = 'failed';
+  document.getElementById('pgTitle').textContent = '更新失败';
+  document.getElementById('pgIcon').className = 'ic fail';
+  document.getElementById('pgIcon').textContent = '!';
+  document.getElementById('pgBar').className = 'bar fail';
+  document.getElementById('pgStage').textContent = '已中止';
+  document.getElementById('pgDl').textContent = '';
+  document.getElementById('pgErr').classList.remove('hidden');
+  document.getElementById('pgErr').innerHTML =
+    '安装包签名校验未通过（CODE E-1082），已自动回滚至 ' + esc(SYS.cur) + '。<br>'
+    + '当前系统继续按旧版本运行，业务不受影响；建议检查网络或切换更新通道后重试。';
+  document.getElementById('pgHint').textContent = '可重试，或稍后在「关于本系统」再次检查';
+  document.getElementById('btnBg').classList.add('hidden');
+  document.getElementById('btnMockFail').style.display = 'none';
+  document.getElementById('btnRetry').classList.remove('hidden');
+  document.getElementById('btnDone').classList.remove('hidden');
+  document.getElementById('btnDone').textContent = '关闭';
+  if (S.hidden){ document.getElementById('mkProg').classList.add('hidden'); toast('更新失败：安装包校验未通过（E-1082）'); }
+}
+
+/* 重启 */
+function doRestart(){
+  document.getElementById('pgTitle').textContent = '正在重启';
+  document.getElementById('pgIcon').className = 'ic';
+  document.getElementById('pgIcon').textContent = '↻';
+  document.getElementById('pgBar').className = 'bar';
+  document.getElementById('pgBar').querySelector('i').style.width = '20%';
+  document.getElementById('pgPct').textContent = '—';
+  document.getElementById('pgStage').textContent = '服务重启中…';
+  document.getElementById('pgDl').textContent = '';
+  document.getElementById('pgHint').textContent = '重启期间系统不可用，请勿刷新或关闭页面';
+  document.getElementById('btnRestart').classList.add('hidden');
+  document.getElementById('btnDone').classList.add('hidden');
+  document.getElementById('mkProg').classList.remove('hidden');
+  S.phase = 'restarting';
+  setTimeout(function (){
+    SYS.cur = SYS.latest;
+    SYS.pending = false;
+    SYS.updated = nowStr();
+    HISTORY.unshift([SYS.latest, NOTES[0][1], '优化', NOTES[0][3].join('；'), 'new']);
+    renderPage();
+    document.getElementById('pgTitle').textContent = '重启完成';
+    document.getElementById('pgIcon').className = 'ic done';
+    document.getElementById('pgIcon').textContent = '✓';
+    document.getElementById('pgBar').className = 'bar done';
+    document.getElementById('pgBar').querySelector('i').style.width = '100%';
+    document.getElementById('pgPct').textContent = '100%';
+    document.getElementById('pgStage').textContent = '运行中';
+    document.getElementById('pgHint').textContent = '系统已运行 ' + SYS.cur + '，配置与数据均已保留';
+    document.getElementById('btnDone').classList.remove('hidden');
+    document.getElementById('btnDone').textContent = '完成';
+    S.phase = 'restarted';
+  }, 2600);
+}
+
+/* ================= 绑定 ================= */
+document.getElementById('btnUpdate').onclick = function (){
+  document.getElementById('mkInfo').classList.add('hidden');
+  startUpdate();
+};
+document.getElementById('btnBg').onclick = function (){
+  S.hidden = true;
+  document.getElementById('mkProg').classList.add('hidden');
+  document.getElementById('btnCheck').disabled = true;
+  document.getElementById('btnCheck').innerHTML = '<span class="spin"></span>更新中…';
+  toast('已转为后台更新，完成后会提示重启');
+  var waitDone = setInterval(function (){
+    if (S.phase === 'installed' || S.phase === 'failed'){
+      clearInterval(waitDone);
+      document.getElementById('btnCheck').disabled = false;
+      document.getElementById('btnCheck').innerHTML = '检查更新';
+      toast(S.phase === 'installed' ? '更新包已安装，请重启服务生效' : '更新失败：安装包校验未通过（E-1082）');
+    }
+  }, 400);
+};
+document.getElementById('btnRestart').onclick = doRestart;
+document.getElementById('btnRetry').onclick = function (){ startUpdate(); };
+document.getElementById('btnDone').onclick = function (){
+  document.getElementById('mkProg').classList.add('hidden');
+  if (S.phase === 'installed') toast('已推迟重启，重启后 ' + SYS.latest + ' 才会生效');
+};
+document.getElementById('pgClose').onclick = function (){
+  if (S.phase === 'updating' || S.phase === 'restarting'){ toast('任务进行中，完成后可关闭'); return; }
+  document.getElementById('mkProg').classList.add('hidden');
+};
+document.getElementById('btnMockFail').onclick = function (){
+  S.failAt = Math.max(20, S.pct + 14);
+  toast('将在 ' + Math.floor(S.failAt) + '% 时模拟失败');
+};
+document.getElementById('swAuto').onclick = function (){
+  this.classList.toggle('on');
+  toast(this.classList.contains('on') ? '已开启自动检查更新' : '已关闭自动检查更新');
+};
+document.getElementById('chanSel').onchange = function (){
+  toast('已切换更新通道：' + this.value);
+};
+
+renderPage();
+</script>
+</body>
+</html>
