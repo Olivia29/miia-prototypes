@@ -419,6 +419,7 @@ function badge(t){
   if (t.st === 'checking') return '<span class="badge checking"><i></i>检查中</span>';
   if (t.st === 'updating') return '<span class="badge checking"><i></i>更新中</span>';
   if (t.st === 'fail') return '<span class="badge fail"><i></i>更新失败</span>';
+  if (t.st === 'checkfail') return '<span class="badge fail"><i></i>检查失败</span>';
   if (hasUpdate(t)) return '<span class="badge new"><i></i>有新版本</span>';
   return '<span class="badge ok"><i></i>已是最新</span>';
 }
@@ -443,7 +444,7 @@ function render(){
       + '<td><span class="sw' + (t.on ? ' on' : '') + '" data-on="' + t.id + '"><i></i></span></td>'
       + '<td>' + (busy
           ? '<span class="lnk dis">检查更新</span>'
-          : '<a class="lnk" data-check="' + t.id + '">检查更新</a>')
+          : '<a class="lnk" data-check="' + t.id + '">' + (t.st === 'checkfail' ? '重新检查' : '检查更新') + '</a>')
       + '<a class="lnk" data-log="' + t.id + '">更新日志</a></td>'
       + '</tr>';
   }).join('') || '<tr><td colspan="9" style="text-align:center;color:#9AA4B2;padding:40px 0">没有符合条件的工具</td></tr>';
@@ -482,8 +483,14 @@ document.getElementById('infoCancel').onclick = function (){
 function checkOne(id){
   var t = byId(id);
   if (!t || t.st === 'checking' || t.st === 'updating') return;
+  if (t.st === 'checkfail' || t.st === 'fail') t.st = 'idle';
   t.st = 'checking'; render();
   setTimeout(function (){
+    if (t.vendor === '数坤科技' && t.st === 'checking'){
+      t.st = 'checkfail'; render();
+      toast('无法连接厂商更新服务（CODE E-2041），请稍后重试');
+      return;
+    }
     if (hasUpdate(t)){
       t.st = 'idle'; render(); openInfo(t, 'info');
     } else {
